@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO: store cache to file, keep it persistable (must handle file changing too - keep the file size on cache too?)
 public class MediaMetadataCache {
     private static MediaMetadataCache instance;
 
