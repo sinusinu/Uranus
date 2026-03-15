@@ -42,10 +42,10 @@ public class MediaPlaybackService extends Service {
     private static final String CHANNEL_ID = "kr.pe.sinu.uranus.notification";
     private static final String ACTION_NOTIFICATION_DISMISSED = "kr.pe.sinu.uranus.NOTIFICATION_DISMISSED";
 
-    public static final int REPEATMODE_NO_REPEAT = 0;
-    public static final int REPEATMODE_REPEAT_ALL = 1;
-    public static final int REPEATMODE_REPEAT_ONE = 2;
-    public static final int REPEATMODE_SHUFFLE = 3;
+    public static final int REPEAT_MODE_NO_REPEAT = 0;
+    public static final int REPEAT_MODE_REPEAT_ALL = 1;
+    public static final int REPEAT_MODE_REPEAT_ONE = 2;
+    public static final int REPEAT_MODE_SHUFFLE = 3;
 
     public class LocalBinder extends Binder {
         public MediaPlaybackService getService() {
@@ -59,7 +59,7 @@ public class MediaPlaybackService extends Service {
     private ExoPlayer player;
 
     private SharedPreferences sp;
-    private int repeatMode = REPEATMODE_NO_REPEAT;
+    private int repeatMode = REPEAT_MODE_NO_REPEAT;
 
     private ArrayList<PlaylistItem> playlist;
     private MediaMetadata nowPlayingMetadata = null;
@@ -109,7 +109,7 @@ public class MediaPlaybackService extends Service {
         playlistName = getString(R.string.common_default_playlist_name);
 
         sp = getSharedPreferences("kr.pe.sinu.uranus.prefs", MODE_PRIVATE);
-        repeatMode = sp.getInt("repeat_mode", REPEATMODE_NO_REPEAT);
+        repeatMode = sp.getInt("repeat_mode", REPEAT_MODE_NO_REPEAT);
         setRepeatMode(repeatMode, false);
 
         dismissedReceiver = new NotificationDismissedReceiver();
@@ -197,19 +197,19 @@ public class MediaPlaybackService extends Service {
         if (save) sp.edit().putInt("repeat_mode", repeatMode).apply();
 
         switch (repeatMode) {
-            case REPEATMODE_NO_REPEAT:
+            case REPEAT_MODE_NO_REPEAT:
                 player.setRepeatMode(Player.REPEAT_MODE_OFF);
                 player.setShuffleModeEnabled(false);
                 break;
-            case REPEATMODE_REPEAT_ALL:
+            case REPEAT_MODE_REPEAT_ALL:
                 player.setRepeatMode(Player.REPEAT_MODE_ALL);
                 player.setShuffleModeEnabled(false);
                 break;
-            case REPEATMODE_REPEAT_ONE:
+            case REPEAT_MODE_REPEAT_ONE:
                 player.setRepeatMode(Player.REPEAT_MODE_ONE);
                 player.setShuffleModeEnabled(false);
                 break;
-            case REPEATMODE_SHUFFLE:
+            case REPEAT_MODE_SHUFFLE:
                 player.setRepeatMode(Player.REPEAT_MODE_ALL);
                 player.setShuffleModeEnabled(true);
                 break;

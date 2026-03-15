@@ -44,6 +44,8 @@ import kr.pe.sinu.uranus.databinding.ActivityLibraryBinding;
 public class LibraryActivity extends AppCompatActivity {
     public static final Set<String> ALLOWED_EXTENSIONS = new HashSet<>(Arrays.asList("mp3", "m4a", "flac", "wav", "ogg"));
 
+    private static final String FILENAME_FOLDERS_JSON = "folders.json";
+
     ActivityLibraryBinding binding;
 
     ArrayList<LibraryItem> displayList;
@@ -181,11 +183,14 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     // folder.json structure
-    // - array of
-    //   - name: folder name
-    //   - uri: (base64 encoded (uri as string)) as hex string
+    // [
+    //   {
+    //     "name": folder name,
+    //     "uri": base64 encoded uri.toString.getBytes(utf-8)
+    //   }, ...
+    // ]
     private void loadFolders() {
-        var foldersFile = new File(getFilesDir(), "folders.json");
+        var foldersFile = new File(getFilesDir(), FILENAME_FOLDERS_JSON);
         if (foldersFile.exists()) {
             try {
                 String foldersFileRaw = Util.readString(foldersFile);
@@ -215,6 +220,7 @@ public class LibraryActivity extends AppCompatActivity {
                     DocumentFile df = DocumentFile.fromTreeUri(this, folderUri);
                     if (df == null || !df.exists() || !df.isDirectory()) {
                         someFolderRevoked = true;
+                        getContentResolver().releasePersistableUriPermission(folderUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                         continue;
                     }
 
@@ -244,7 +250,7 @@ public class LibraryActivity extends AppCompatActivity {
             }
             foldersArray.put(folderJson);
         }
-        var foldersFile = new File(getFilesDir(), "folders.json");
+        var foldersFile = new File(getFilesDir(), FILENAME_FOLDERS_JSON);
         Util.writeString(foldersFile, foldersArray.toString());
     }
 

@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MediaMetadataCache {
+    private static final String FILENAME_KNOWN_TAGS_JSON = "known_tags.json";
+
     private static MediaMetadataCache instance;
 
     private boolean isCacheLoaded = false;
@@ -40,7 +42,7 @@ public class MediaMetadataCache {
     public CacheableMediaMetadata getMediaMetadata(Context context, String filename, Uri uri, long size, long lastModified) {
         if (!isCacheLoaded) {
             isCacheLoaded = true;
-            File f = new File(context.getCacheDir(), "known_tags.json");
+            File f = new File(context.getCacheDir(), FILENAME_KNOWN_TAGS_JSON);
             if (f.exists()) {
                 var c = Util.readString(f);
                 synchronized (cache) {
@@ -153,7 +155,7 @@ public class MediaMetadataCache {
                 }
             }
             if (!error) {
-                File f = new File(context.getCacheDir(), "known_tags.json");
+                File f = new File(context.getCacheDir(), FILENAME_KNOWN_TAGS_JSON);
                 Util.writeString(f, o.toString());
             }
         }).start();

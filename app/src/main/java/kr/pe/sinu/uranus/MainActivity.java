@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         SharedPreferences sp = getSharedPreferences("kr.pe.sinu.uranus.prefs", MODE_PRIVATE);
-        var initialRepeatMode = sp.getInt("repeat_mode", MediaPlaybackService.REPEATMODE_NO_REPEAT);
+        var initialRepeatMode = sp.getInt("repeat_mode", MediaPlaybackService.REPEAT_MODE_NO_REPEAT);
         updateRepeatModeIcon(initialRepeatMode);
 
         playlistResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), (result) -> {
@@ -331,19 +331,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateRepeatModeIcon(int repeatMode) {
         switch (repeatMode) {
-            case MediaPlaybackService.REPEATMODE_NO_REPEAT:
+            case MediaPlaybackService.REPEAT_MODE_NO_REPEAT:
                 binding.ivMainRepeat.setImageResource(R.drawable.ic_line_end);
                 binding.ivMainRepeat.setContentDescription(getString(R.string.acc_repeat_none));
                 break;
-            case MediaPlaybackService.REPEATMODE_REPEAT_ALL:
+            case MediaPlaybackService.REPEAT_MODE_REPEAT_ALL:
                 binding.ivMainRepeat.setImageResource(R.drawable.ic_repeat);
                 binding.ivMainRepeat.setContentDescription(getString(R.string.acc_repeat_all));
                 break;
-            case MediaPlaybackService.REPEATMODE_REPEAT_ONE:
+            case MediaPlaybackService.REPEAT_MODE_REPEAT_ONE:
                 binding.ivMainRepeat.setImageResource(R.drawable.ic_repeat_one);
                 binding.ivMainRepeat.setContentDescription(getString(R.string.acc_repeat_one));
                 break;
-            case MediaPlaybackService.REPEATMODE_SHUFFLE:
+            case MediaPlaybackService.REPEAT_MODE_SHUFFLE:
                 binding.ivMainRepeat.setImageResource(R.drawable.ic_shuffle);
                 binding.ivMainRepeat.setContentDescription(getString(R.string.acc_repeat_shuffle));
                 break;

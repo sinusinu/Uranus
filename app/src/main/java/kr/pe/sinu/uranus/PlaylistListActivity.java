@@ -104,7 +104,7 @@ public class PlaylistListActivity extends AppCompatActivity {
 //            }
 //        }
 
-        File f = new File(getFilesDir(), "saved_playlists.json");
+        File f = new File(getFilesDir(), PlaylistActivity.FILENAME_SAVED_PLAYLISTS_JSON);
         if (f.exists()) {
             var spr = Util.readString(f);
             try {
@@ -129,7 +129,7 @@ public class PlaylistListActivity extends AppCompatActivity {
     }
 
     private void saveSavedPlaylist() {
-        File f = new File(getFilesDir(), "saved_playlists.json");
+        File f = new File(getFilesDir(), PlaylistActivity.FILENAME_SAVED_PLAYLISTS_JSON);
 
         var newPlaylistsJson = new JSONObject();
         try {

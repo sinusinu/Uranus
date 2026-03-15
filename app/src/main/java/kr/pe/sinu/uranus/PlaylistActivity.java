@@ -41,6 +41,8 @@ public class PlaylistActivity extends AppCompatActivity {
     public static final String EXTRA_URIS_TO_ADD = "uris_to_add";
     public static final String EXTRA_PLAYLIST_TO_LOAD = "playlist_to_load";
 
+    public static final String FILENAME_SAVED_PLAYLISTS_JSON = "saved_playlists.json";
+
     ActivityPlaylistBinding binding;
 
     ArrayList<PlaylistItem> playlist;
@@ -195,7 +197,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     private void saveCurrentPlaylist() {
         ArrayList<SavedPlaylist> savedPlaylists = new ArrayList<>();
-        File f = new File(getFilesDir(), "saved_playlists.json");
+        File f = new File(getFilesDir(), FILENAME_SAVED_PLAYLISTS_JSON);
         if (f.exists()) {
             var spr = Util.readString(f);
             try {
@@ -249,7 +251,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     private void loadSavedPlaylist(String name) {
         ArrayList<SavedPlaylist> savedPlaylists = new ArrayList<>();
-        File f = new File(getFilesDir(), "saved_playlists.json");
+        File f = new File(getFilesDir(), FILENAME_SAVED_PLAYLISTS_JSON);
         if (f.exists()) {
             var spr = Util.readString(f);
             try {
