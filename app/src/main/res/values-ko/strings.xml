@@ -1,0 +1,85 @@
+<resources>
+    <string name="app_name">Uranus</string>
+
+    <string name="main_placeholder_title">Uranus</string>
+    <string name="main_placeholder_subtitle">재생목록을 생성해주세요</string>
+    <string name="main_placeholder_time">0:00</string>
+    <string name="main_unknown_artist">알 수 없는 아티스트</string>
+    <string name="main_unknown_album">알 수 없는 앨범</string>
+    <string name="main_no_settings_yet">아직 설정할 게 없어요!</string>
+
+    <string name="playlist_title">재생목록</string>
+    <string name="playlist_subtitle_placeholder">새 재생목록, 0개 곡</string>
+    <plurals name="playlist_subtitle_count">
+        <item quantity="other">%s, %d개 곡</item>
+    </plurals>
+    <string name="playlist_warning_clear_message">재생목록을 초기화할까요?</string>
+    <string name="playlist_warning_cannot_save_empty_playlist">빈 재생목록은 저장할 수 없어요!</string>
+
+    <string name="playlist_save_title">재생목록 저장하기</string>
+    <string name="playlist_save_message">같은 이름의 재생목록이 존재할 경우 덮어씌워집니다.</string>
+    <string name="playlist_save_saved">재생목록이 \'%s\'(으)로 저장되었습니다.</string>
+    <string name="playlist_save_error_empty_name">재생목록 이름은 비워둘 수 없습니다!</string>
+
+    <string name="playlist_list_title">저장된 재생목록 불러오기</string>
+    <string name="playlist_list_subtitle_placeholder">재생목록 0개</string>
+    <plurals name="playlist_list_subtitle_count">
+        <item quantity="other">재생목록 %d개</item>
+    </plurals>
+    <string name="playlist_list_warning_replace">현재 재생목록이\n덮어씌워집니다!</string>
+    <string name="playlist_list_warning_no_selection">불러올 재생목록을 선택해주세요!</string>
+    <string name="playlist_list_warning_remove_list_message">재생목록 \'%s\'을(를) 삭제할까요?</string>
+
+    <plurals name="playlist_list_item_subtitle_count">
+        <item quantity="other">%d개 곡</item>
+    </plurals>
+
+    <string name="library_title">라이브러리</string>
+    <string name="library_subtitle_root">추가할 파일을 선택합니다</string>
+    <string name="library_selected_placeholder">0개 파일 선택됨</string>
+    <plurals name="library_selected_count">
+        <item quantity="other">%d개 파일 선택됨</item>
+    </plurals>
+    <string name="library_item_add_folder_title">새 폴더 추가</string>
+    <string name="library_item_library_subtitle">라이브러리</string>
+    <string name="library_item_folder_subtitle">폴더</string>
+    <string name="library_item_up_title">..</string>
+    <string name="library_item_up_subtitle">상위 폴더로</string>
+    <string name="library_warning_remove_folder_title">\'%s\'을(를) 삭제할까요?</string>
+    <string name="library_warning_remove_folder_message">Uranus가 이 폴더 안의 파일에 더 이상 접근할 수 없게 됩니다!\n\n(주의: 파일이 삭제되는 것은 아닙니다)</string>
+    <string name="library_error_access_to_folder_revoked">Uranus가 하나 이상의 폴더에 대한 접근 권한을 잃었습니다. 라이브러리가 정리되었습니다.</string>
+    <string name="library_error_folder_list_corrupted">라이브러리 데이터를 불러오지 못했습니다. 라이브러리가 초기화되었습니다.</string>
+
+    <string name="settings_title">설정</string>
+
+    <string name="acc_cover">앨범 아트</string>
+    <string name="acc_play">재생</string>
+    <string name="acc_pause">일시정지</string>
+    <string name="acc_play_pause">재생/일시정지</string>
+    <string name="acc_prev">이전 곡</string>
+    <string name="acc_next">다음 곡</string>
+    <string name="acc_more">더 보기</string>
+    <string name="acc_playlist">재생목록</string>
+    <string name="acc_settings">설정</string>
+    <string name="acc_repeat_none">반복 없음</string>
+    <string name="acc_repeat_all">전체 반복</string>
+    <string name="acc_repeat_one">한 곡 반복</string>
+    <string name="acc_repeat_shuffle">셔플</string>
+    <string name="acc_add">추가</string>
+    <string name="acc_clear">초기화</string>
+    <string name="acc_load_playlist">재생목록 불러오기</string>
+    <string name="acc_save_playlist">재생목록 저장하기</string>
+    <string name="acc_select_all">모두 선택</string>
+    <!-- this is a debug feature and will be removed later -->
+    <string name="acc_emergency_escape">돔황챠!!!!!!!!!!!!!!</string>
+
+    <string name="service_name">미디어 재생 서비스</string>
+    <string name="service_desc">음악을 백그라운드에서 재생하는 데 사용됩니다.</string>
+
+    <string name="common_default_playlist_name">새 재생목록</string>
+    <string name="common_yes">예</string>
+    <string name="common_no">아니오</string>
+    <string name="common_ok">확인</string>
+    <string name="common_cancel">취소</string>
+    <string name="common_save">저장</string>
+</resources>

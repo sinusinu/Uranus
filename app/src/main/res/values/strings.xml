@@ -1,0 +1,98 @@
+<resources>
+    <string name="app_name">Uranus</string>
+
+    <string name="main_placeholder_title">Uranus</string>
+    <string name="main_placeholder_subtitle">Configure Playlist to Begin</string>
+    <string name="main_placeholder_time">0:00</string>
+    <string name="main_unknown_artist">Unknown Artist</string>
+    <string name="main_unknown_album">Unknown Album</string>
+    <string name="main_subtitle_aa_format" translatable="false">%s / %s</string>
+    <string name="main_no_settings_yet">No settings yet!</string>
+
+    <string name="playlist_title">Playlist</string>
+    <string name="playlist_subtitle_placeholder">New Playlist, 0 songs</string>
+    <plurals name="playlist_subtitle_count">
+        <item quantity="one">%s, %d song</item>
+        <item quantity="other">%s, %d songs</item>
+    </plurals>
+    <string name="playlist_warning_clear_message">Clear current playlist?</string>
+    <string name="playlist_warning_cannot_save_empty_playlist">Empty playlist cannot be saved!</string>
+
+    <string name="playlist_save_title">Save Playlist As</string>
+    <string name="playlist_save_message">Playlist with same name, if exists, will be overwritten.</string>
+    <string name="playlist_save_saved">Playlist saved as \'%s\'.</string>
+    <string name="playlist_save_error_empty_name">Name cannot be empty!</string>
+
+    <string name="playlist_item_title_placeholder" translatable="false">Sample Song Title</string>
+    <string name="playlist_item_subtitle_placeholder" translatable="false">sample_song.mp3</string>
+
+    <string name="playlist_list_title">Load Saved Playlists</string>
+    <string name="playlist_list_subtitle_placeholder">0 playlists</string>
+    <plurals name="playlist_list_subtitle_count">
+        <item quantity="one">%d playlist</item>
+        <item quantity="other">%d playlists</item>
+    </plurals>
+    <string name="playlist_list_warning_replace">Current playlist will be\noverwritten!</string>
+    <string name="playlist_list_warning_no_selection">Select a playlist to load!</string>
+    <string name="playlist_list_warning_remove_list_message">Remove playlist \'%s\'?</string>
+
+    <string name="playlist_list_item_title_placeholder" translatable="false">Sample Playlist</string>
+    <string name="playlist_list_item_subtitle_placeholder" translatable="false">9223372036854775807 songs</string>
+    <plurals name="playlist_list_item_subtitle_count">
+        <item quantity="one">%d song</item>
+        <item quantity="other">%d songs</item>
+    </plurals>
+
+    <string name="library_title">Library</string>
+    <string name="library_subtitle_root">Select Files to Add</string>
+    <string name="library_selected_placeholder">0 files selected</string>
+    <plurals name="library_selected_count">
+        <item quantity="one">%d file selected</item>
+        <item quantity="other">%d files selected</item>
+    </plurals>
+    <string name="library_item_add_folder_title">Add New Folder</string>
+    <string name="library_item_library_subtitle">Library</string>
+    <string name="library_item_folder_subtitle">Folder</string>
+    <string name="library_item_up_title">..</string>
+    <string name="library_item_up_subtitle">Go Up</string>
+    <string name="library_warning_remove_folder_title">Remove \'%s\'?</string>
+    <string name="library_warning_remove_folder_message">Uranus will lose access to all files in this folder!\n\n(Note: files won\'t be deleted)</string>
+    <string name="library_error_access_to_folder_revoked">Uranus lost access to one or more folders. The library has been updated.</string>
+    <string name="library_error_folder_list_corrupted">Could not read the library data. The library has been reset.</string>
+
+    <string name="library_item_title_placeholder" translatable="false">Music</string>
+    <string name="library_item_subtitle_placeholder" translatable="false">/storage/emulated/0/Music</string>
+
+    <string name="settings_title">Settings</string>
+
+    <string name="acc_cover">Cover Art</string>
+    <string name="acc_play">Play</string>
+    <string name="acc_pause">Pause</string>
+    <string name="acc_play_pause">Play/Pause</string>
+    <string name="acc_prev">Previous</string>
+    <string name="acc_next">Next</string>
+    <string name="acc_more">More</string>
+    <string name="acc_playlist">Playlist</string>
+    <string name="acc_settings">Settings</string>
+    <string name="acc_repeat_none">No Repeat</string>
+    <string name="acc_repeat_all">Repeat All</string>
+    <string name="acc_repeat_one">Repeat One</string>
+    <string name="acc_repeat_shuffle">Shuffle</string>
+    <string name="acc_add">Add</string>
+    <string name="acc_clear">Clear</string>
+    <string name="acc_load_playlist">Load Playlist</string>
+    <string name="acc_save_playlist">Save Playlist</string>
+    <string name="acc_select_all">Select All</string>
+    <!-- this is a debug feature and will be removed later -->
+    <string name="acc_emergency_escape">EMERGENCY ESCAPE!1!!!!!</string>
+
+    <string name="service_name">Media Playback Service</string>
+    <string name="service_desc">Used for playing media on background.</string>
+
+    <string name="common_default_playlist_name">New Playlist</string>
+    <string name="common_yes">Yes</string>
+    <string name="common_no">No</string>
+    <string name="common_ok">OK</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_save">Save</string>
+</resources>

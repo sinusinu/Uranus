@@ -1,0 +1,332 @@
+// Copyright 2026 Woohyun Shin (sinusinu)
+// SPDX-License-Identifier: GPL-3.0-only
+
+package kr.pe.sinu.uranus;
+
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Binder;
+import android.os.Build;
+import android.os.IBinder;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.media3.common.AudioAttributes;
+import androidx.media3.common.C;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.MediaMetadata;
+import androidx.media3.common.PlaybackException;
+import androidx.media3.common.Player;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.session.MediaSession;
+import androidx.media3.session.MediaStyleNotificationHelper;
+
+import java.util.ArrayList;
+
+public class MediaPlaybackService extends Service {
+    private static final int NOTIFICATION_ID = 1;
+    private static final String CHANNEL_ID = "kr.pe.sinu.uranus.notification";
+    private static final String ACTION_NOTIFICATION_DISMISSED = "kr.pe.sinu.uranus.NOTIFICATION_DISMISSED";
+
+    public static final int REPEATMODE_NO_REPEAT = 0;
+    public static final int REPEATMODE_REPEAT_ALL = 1;
+    public static final int REPEATMODE_REPEAT_ONE = 2;
+    public static final int REPEATMODE_SHUFFLE = 3;
+
+    public class LocalBinder extends Binder {
+        public MediaPlaybackService getService() {
+            return MediaPlaybackService.this;
+        }
+    }
+
+    private final IBinder binder = new LocalBinder();
+
+    private MediaSession mediaSession;
+    private ExoPlayer player;
+
+    private SharedPreferences sp;
+    private int repeatMode = REPEATMODE_NO_REPEAT;
+
+    private ArrayList<PlaylistItem> playlist;
+    private MediaMetadata nowPlayingMetadata = null;
+    private String playlistName;
+
+    private MpsEventListener eventListener;
+    private NotificationDismissedReceiver dismissedReceiver;
+
+    @OptIn(markerClass = UnstableApi.class)
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        player = new ExoPlayer.Builder(this)
+                .setAudioAttributes(new AudioAttributes.Builder()
+                        .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                        .setUsage(C.USAGE_MEDIA)
+                        .build(), true)
+                .build();
+
+        player.setPlayWhenReady(false);
+        player.addListener(new Player.Listener() {
+            @Override
+            public void onPlaybackStateChanged(int playbackState) {
+                //Log.d("Uranus", "Playback state changed to " + playbackState);
+                updateNotification();
+                if (eventListener != null) eventListener.onMediaChanged();
+            }
+
+            @Override
+            public void onMediaMetadataChanged(@NonNull MediaMetadata mediaMetadata) {
+                nowPlayingMetadata = mediaMetadata;
+                updateNotification();
+                if (eventListener != null) eventListener.onMediaChanged();
+            }
+
+            @Override
+            public void onPlayerError(@NonNull PlaybackException error) {
+                Log.e("Uranus", "Player error! " + error.getMessage());
+            }
+        });
+
+        mediaSession = new MediaSession.Builder(this, player)
+                .build();
+
+        playlist = new ArrayList<>();
+        playlistName = getString(R.string.common_default_playlist_name);
+
+        sp = getSharedPreferences("kr.pe.sinu.uranus.prefs", MODE_PRIVATE);
+        repeatMode = sp.getInt("repeat_mode", REPEATMODE_NO_REPEAT);
+        setRepeatMode(repeatMode, false);
+
+        dismissedReceiver = new NotificationDismissedReceiver();
+        ContextCompat.registerReceiver(this, dismissedReceiver, new IntentFilter(ACTION_NOTIFICATION_DISMISSED), ContextCompat.RECEIVER_NOT_EXPORTED);
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return binder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        eventListener = null;
+        if (playlist.isEmpty()) {
+            stopSelf();
+        }
+        return false;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        startForeground(NOTIFICATION_ID, buildNotification());
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        mediaSession.release();
+        player.release();
+        unregisterReceiver(dismissedReceiver);
+        super.onDestroy();
+    }
+
+    public ArrayList<PlaylistItem> getPlaylist() {
+        return new ArrayList<>(playlist);
+    }
+
+    public void setPlaylist(ArrayList<PlaylistItem> newPlaylist) {
+        playlist.clear();
+        playlist.addAll(newPlaylist);
+        ArrayList<MediaItem> playerPlaylist = new ArrayList<>(newPlaylist.size());
+        for (var pi : newPlaylist) playerPlaylist.add(MediaItem.fromUri(pi.uriSource));
+        player.setMediaItems(playerPlaylist, false);
+    }
+
+    public void play() {
+        if (playlist.isEmpty()) return;
+        player.prepare();
+        if (!player.getPlayWhenReady()) player.setPlayWhenReady(true);
+    }
+
+    public void pause() {
+        if (!player.isPlaying() || !player.getPlayWhenReady()) return;
+        player.pause();
+    }
+
+    public void goPrevious() { player.seekToPrevious(); }
+
+    public void goNext() { player.seekToNext(); }
+
+    public void setCurrentPlaylistName(String newName) { playlistName = newName; }
+
+    public String getCurrentPlaylistName() { return playlistName; }
+
+    public boolean isPlaying() { return player.isPlaying(); }
+
+    public int getPlaybackState() { return player.getPlaybackState(); }
+
+    public boolean getPlayWhenReady() { return player.getPlayWhenReady(); }
+
+    public void seekTo(int position) { player.seekTo(position); }
+
+    public int getCurrentPlayingIndex() {
+        if (player.getPlaybackState() != Player.STATE_READY && player.getPlaybackState() != Player.STATE_BUFFERING) return -1;
+        return player.getCurrentMediaItemIndex();
+    }
+
+    public int getRepeatMode() { return repeatMode; }
+
+    public void setRepeatMode(int repeatMode) { setRepeatMode(repeatMode, true); }
+    public void setRepeatMode(int repeatMode, boolean save) {
+        this.repeatMode = repeatMode;
+        if (save) sp.edit().putInt("repeat_mode", repeatMode).apply();
+
+        switch (repeatMode) {
+            case REPEATMODE_NO_REPEAT:
+                player.setRepeatMode(Player.REPEAT_MODE_OFF);
+                player.setShuffleModeEnabled(false);
+                break;
+            case REPEATMODE_REPEAT_ALL:
+                player.setRepeatMode(Player.REPEAT_MODE_ALL);
+                player.setShuffleModeEnabled(false);
+                break;
+            case REPEATMODE_REPEAT_ONE:
+                player.setRepeatMode(Player.REPEAT_MODE_ONE);
+                player.setShuffleModeEnabled(false);
+                break;
+            case REPEATMODE_SHUFFLE:
+                player.setRepeatMode(Player.REPEAT_MODE_ALL);
+                player.setShuffleModeEnabled(true);
+                break;
+        }
+    }
+
+    // TODO: remove this function on release
+    public void emergencyEscape() { stopSelf(); }
+
+    public MpsMeta getMpsCurrentMeta() {
+        if (player.getPlaybackState() != Player.STATE_READY) return null;
+        var currentPlayingIndex = getCurrentPlayingIndex();
+        String title = (nowPlayingMetadata.title != null ? nowPlayingMetadata.title.toString() : playlist.get(currentPlayingIndex).filename);
+        String artist = "??unk";
+        if (nowPlayingMetadata.artist != null) artist = nowPlayingMetadata.artist.toString();
+        String album = "??unk";
+        if (nowPlayingMetadata.albumTitle != null) album = nowPlayingMetadata.albumTitle.toString();
+        return new MpsMeta(title, artist, album, Uri.parse(playlist.get(currentPlayingIndex).uriSource));
+    }
+
+    public static class MpsMeta {
+        String title;
+        String artist;
+        String album;
+        Uri uri;
+
+        public MpsMeta(String title, String artist, String album, Uri uri) {
+            this.title = title;
+            this.artist = artist;
+            this.album = album;
+            this.uri = uri;
+        }
+    }
+
+    public MpsState getMpsState() {
+        if (player.getPlaybackState() == Player.STATE_READY) {
+            return new MpsState(
+                    player.getDuration(),
+                    player.getCurrentPosition(),
+                    player.getPlayWhenReady()
+            );
+        } else {
+            return null;
+        }
+    }
+
+    public static class MpsState {
+        public long duration;
+        public long position;
+        public boolean playButtonIsPlay;
+
+        public MpsState(long duration, long position, boolean playButtonIsPlay) {
+            this.duration = duration;
+            this.position = position;
+            this.playButtonIsPlay = playButtonIsPlay;
+        }
+    }
+
+    public void unloadCache() {
+        MediaMetadataCache.getInstance().unloadCache();
+    }
+
+    public void setEventListener(MpsEventListener eventListener) { this.eventListener = eventListener; }
+
+    @OptIn(markerClass = UnstableApi.class)
+    private Notification buildNotification() {
+        createNotificationChannel();
+
+        Intent dismissIntent = new Intent(ACTION_NOTIFICATION_DISMISSED);
+        dismissIntent.setPackage(getPackageName()); // required for implicit intents on newer APIs
+
+        return new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                .setStyle(new MediaStyleNotificationHelper.MediaStyle(mediaSession))
+                .setDeleteIntent(PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_IMMUTABLE))
+                .setOngoing(false)
+                .build();
+    }
+
+    @OptIn(markerClass = UnstableApi.class)
+    private void updateNotification() {
+        Intent dismissIntent = new Intent(ACTION_NOTIFICATION_DISMISSED);
+        dismissIntent.setPackage(getPackageName()); // required for implicit intents on newer APIs
+
+        var notifBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                .setStyle(new MediaStyleNotificationHelper.MediaStyle(mediaSession))
+                .setDeleteIntent(PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_IMMUTABLE))
+                .setOngoing(false);
+        if (nowPlayingMetadata != null && nowPlayingMetadata.title == null) {
+            notifBuilder.setContentTitle(playlist.get(getCurrentPlayingIndex()).filename);
+        }
+        var notif = notifBuilder.build();
+        var nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        nm.notify(NOTIFICATION_ID, notif);
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, getString(R.string.service_name), NotificationManager.IMPORTANCE_LOW);
+            channel.setDescription(getString(R.string.service_desc));
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
+        }
+    }
+
+    public interface MpsEventListener {
+        void onMediaChanged();
+        void onMpsExiting();
+    }
+
+    public class NotificationDismissedReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (eventListener != null) eventListener.onMpsExiting();
+            stopSelf();
+        }
+    }
+}
