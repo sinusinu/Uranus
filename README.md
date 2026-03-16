@@ -10,6 +10,12 @@ Uranus is currently in an early stage of development: barely works, lots of prob
 
 No support will be provided until the project reaches some stable point.
 
+# Screenshots
+
+![Screenshots](images/screenshot_alpha.png)
+
+<sup>Note: Screenshot from an early build; things are subject to change.</sup>
+
 # To-dos
 
 - [x] File-based Playlist system
