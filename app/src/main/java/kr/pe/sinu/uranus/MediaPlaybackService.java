@@ -301,7 +301,7 @@ public class MediaPlaybackService extends Service {
                 .setStyle(new MediaStyleNotificationHelper.MediaStyle(mediaSession))
                 .setDeleteIntent(PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_IMMUTABLE))
                 .setOngoing(false);
-        if (nowPlayingMetadata != null && nowPlayingMetadata.title == null) {
+        if (getCurrentPlayingIndex() != -1 && nowPlayingMetadata != null && nowPlayingMetadata.title == null) {
             notifBuilder.setContentTitle(playlist.get(getCurrentPlayingIndex()).filename);
         }
         var notif = notifBuilder.build();
