@@ -208,7 +208,7 @@
                 android:clickable="true"
                 android:contentDescription="@string/acc_play"
                 android:focusable="true"
-                android:padding="12dp"
+                android:padding="8dp"
                 app:srcCompat="@drawable/ic_play" />
 
             <ImageView
@@ -220,7 +220,7 @@
                 android:clickable="true"
                 android:contentDescription="@string/acc_settings"
                 android:focusable="true"
-                android:padding="14dp"
+                android:padding="12dp"
                 app:srcCompat="@drawable/ic_settings" />
 
             <Space
