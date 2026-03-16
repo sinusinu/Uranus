@@ -12,9 +12,7 @@ No support will be provided until the project reaches some stable point.
 
 # To-dos
 
-- [ ] File-based Playlist system
-  - [x] "it works"
-  - [ ] More than that
+- [x] File-based Playlist system
 - [ ] YT-style double-tap to seek
 - [ ] Volume multiplier
 
