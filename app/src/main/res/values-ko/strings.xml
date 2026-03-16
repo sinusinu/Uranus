@@ -16,6 +16,8 @@
     </plurals>
     <string name="playlist_warning_clear_message">재생목록을 초기화할까요?</string>
     <string name="playlist_warning_cannot_save_empty_playlist">빈 재생목록은 저장할 수 없어요!</string>
+    <string name="playlist_confirm_ok_and_start_from_title">\'%s\'부터 재생할까요?</string>
+    <string name="playlist_confirm_ok_and_start_from_message">재생목록 화면이 닫히고 변경 사항이 저장됩니다.</string>
 
     <string name="playlist_save_title">재생목록 저장하기</string>
     <string name="playlist_save_message">같은 이름의 재생목록이 존재할 경우 덮어씌워집니다.</string>

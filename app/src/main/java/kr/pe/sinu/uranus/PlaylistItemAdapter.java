@@ -19,11 +19,13 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
     private ArrayList<PlaylistItem> list;
     private HashSet<Integer> selected;
     private OnItemClickListener onItemClickListener;
+    private OnItemLongClickListener onItemLongClickListener;
 
-    public PlaylistItemAdapter(ArrayList<PlaylistItem> list, HashSet<Integer> selected, OnItemClickListener onItemClickListener) {
+    public PlaylistItemAdapter(ArrayList<PlaylistItem> list, HashSet<Integer> selected, OnItemClickListener onItemClickListener, OnItemLongClickListener onItemLongClickListener) {
         this.list = list;
         this.selected = selected;
         this.onItemClickListener = onItemClickListener;
+        this.onItemLongClickListener = onItemLongClickListener;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -61,6 +63,13 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
         holder.itemView.setOnClickListener(v -> {
             if (onItemClickListener != null) onItemClickListener.onItemClick(position);
         });
+        holder.itemView.setOnLongClickListener(v -> {
+            if (onItemLongClickListener != null) {
+                onItemLongClickListener.onItemLongClick(position);
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
@@ -70,5 +79,9 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
 
     public interface OnItemClickListener {
         void onItemClick(int position);
+    }
+
+    public interface OnItemLongClickListener {
+        void onItemLongClick(int position);
     }
 }

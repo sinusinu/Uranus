@@ -51,6 +51,7 @@ public class PlaylistActivity extends AppCompatActivity {
     HashSet<Integer> selected;
     PlaylistItemAdapter adapter;
     PlaylistItemClickListener onItemClickListener;
+    PlaylistItemLongClickListener onItemLongClickListener;
 
     String playlistName;
 
@@ -77,7 +78,8 @@ public class PlaylistActivity extends AppCompatActivity {
         playlist = new ArrayList<>();
         selected = new HashSet<>();
         onItemClickListener = new PlaylistItemClickListener();
-        adapter = new PlaylistItemAdapter(playlist, selected, onItemClickListener);
+        onItemLongClickListener = new PlaylistItemLongClickListener();
+        adapter = new PlaylistItemAdapter(playlist, selected, onItemClickListener, onItemLongClickListener);
 
         binding.rvPlaylistList.setLayoutManager(new LinearLayoutManager(this));
         binding.rvPlaylistList.setAdapter(adapter);
@@ -460,6 +462,26 @@ public class PlaylistActivity extends AppCompatActivity {
             else selected.remove(position);
             updateControlBar();
             adapter.notifyItemChanged(position);
+        }
+    }
+
+    public class PlaylistItemLongClickListener implements PlaylistItemAdapter.OnItemLongClickListener {
+        @Override
+        public void onItemLongClick(int position) {
+            var ab = new AlertDialog.Builder(PlaylistActivity.this)
+                    .setTitle(String.format(getString(R.string.playlist_confirm_ok_and_start_from_title), playlist.get(position).title))
+                    .setMessage(R.string.playlist_confirm_ok_and_start_from_message)
+                    .setPositiveButton(R.string.common_yes, (d, i) -> {
+                        Intent intent = new Intent();
+                        intent.putParcelableArrayListExtra(MainActivity.EXTRA_NEW_PLAYLIST, playlist);
+                        intent.putExtra(MainActivity.EXTRA_NEW_PLAYLIST_NAME, playlistName);
+                        intent.putExtra(MainActivity.EXTRA_JUMP_POSITION_INDEX, position);
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    })
+                    .setNegativeButton(R.string.common_no, null)
+                    .create();
+            ab.show();
         }
     }
 }

@@ -38,6 +38,7 @@ import kr.pe.sinu.uranus.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_NEW_PLAYLIST = "new_playlist";
     public static final String EXTRA_NEW_PLAYLIST_NAME = "new_playlist_name";
+    public static final String EXTRA_JUMP_POSITION_INDEX = "jump_position_index";
 
     private static final int UPDATE_MPS_STATUS_INTERVAL_MS = 450;
 
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<PlaylistItem> pendingPlaylistUpdate = null;
     private String pendingPlaylistNameUpdate = null;
+    private int pendingJumpPosIndex = -1;
 
     private ActivityResultLauncher<Intent> playlistResult;
 
@@ -86,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
                 if (pendingPlaylistNameUpdate != null) {
                     mps.setCurrentPlaylistName(pendingPlaylistNameUpdate);
                     pendingPlaylistNameUpdate = null;
+                }
+                if (pendingJumpPosIndex != -1) {
+                    mps.jumpTo(pendingJumpPosIndex);
                 }
             }
 
@@ -123,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 var uncastedNewPlaylist = result.getData().getParcelableArrayListExtra(EXTRA_NEW_PLAYLIST);
                 var newPlaylistName = result.getData().getStringExtra(EXTRA_NEW_PLAYLIST_NAME);
                 if (newPlaylistName == null) newPlaylistName = getString(R.string.common_default_playlist_name);
+                var jumpPosIndex = result.getData().getIntExtra(EXTRA_JUMP_POSITION_INDEX, -1);
                 if (uncastedNewPlaylist != null) {
                     var newPlaylist = new ArrayList<PlaylistItem>(uncastedNewPlaylist.size());
                     for (var pi : uncastedNewPlaylist) newPlaylist.add((PlaylistItem) pi);
@@ -130,9 +136,11 @@ public class MainActivity extends AppCompatActivity {
                     if (bound) {
                         mps.setPlaylist(newPlaylist);
                         mps.setCurrentPlaylistName(newPlaylistName);
+                        if (jumpPosIndex != -1) mps.jumpTo(jumpPosIndex);
                     } else {
                         pendingPlaylistUpdate = newPlaylist;
                         pendingPlaylistNameUpdate = newPlaylistName;
+                        pendingJumpPosIndex = jumpPosIndex;
                     }
                     if (newPlaylist.isEmpty()) {
                         binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);

@@ -176,6 +176,8 @@ public class MediaPlaybackService extends Service {
 
     public void goNext() { player.seekToNext(); }
 
+    public void jumpTo(int index) { player.seekTo(index, 0); }
+
     public void setCurrentPlaylistName(String newName) { playlistName = newName; }
 
     public String getCurrentPlaylistName() { return playlistName; }
