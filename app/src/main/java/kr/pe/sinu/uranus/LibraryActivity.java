@@ -284,7 +284,7 @@ public class LibraryActivity extends AppCompatActivity {
                         DocumentsContract.Document.COLUMN_MIME_TYPE,
                         DocumentsContract.Document.COLUMN_SIZE,
                         DocumentsContract.Document.COLUMN_LAST_MODIFIED,
-                }, null, null, null)) {
+                }, null, null, DocumentsContract.Document.COLUMN_DISPLAY_NAME)) {
                     if (cursor == null) {
                         Log.e("Uranus", "display list fetch: cursor is null?");
                         return;
