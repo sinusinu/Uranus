@@ -2,6 +2,8 @@
     <color name="ic_launcher_background">#233F5D</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="hovered">#0F000000</color>
     <color name="selected">#1F000000</color>
+    <color name="selected_hovered">#2F000000</color>
     <color name="selected_selected">#3F000000</color>
 </resources>

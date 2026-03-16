@@ -1,4 +1,6 @@
 <resources>
+    <color name="hovered">#0FFFFFFF</color>
     <color name="selected">#1FFFFFFF</color>
+    <color name="selected_hovered">#2F000000</color>
     <color name="selected_selected">#3FFFFFFF</color>
 </resources>
