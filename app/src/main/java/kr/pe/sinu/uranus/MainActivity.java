@@ -91,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (pendingJumpPosIndex != -1) {
                     mps.jumpTo(pendingJumpPosIndex);
+                    // user wants to play, start playing now
+                    mps.play();
                 }
             }
 
@@ -136,7 +138,11 @@ public class MainActivity extends AppCompatActivity {
                     if (bound) {
                         mps.setPlaylist(newPlaylist);
                         mps.setCurrentPlaylistName(newPlaylistName);
-                        if (jumpPosIndex != -1) mps.jumpTo(jumpPosIndex);
+                        if (jumpPosIndex != -1) {
+                            mps.jumpTo(jumpPosIndex);
+                            // user wants to play, start playing now
+                            mps.play();
+                        }
                     } else {
                         pendingPlaylistUpdate = newPlaylist;
                         pendingPlaylistNameUpdate = newPlaylistName;
