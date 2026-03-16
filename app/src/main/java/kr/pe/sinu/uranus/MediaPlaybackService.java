@@ -159,7 +159,7 @@ public class MediaPlaybackService extends Service {
 
     public void play() {
         if (playlist.isEmpty()) return;
-        player.prepare();
+        if (player.getPlaybackState() != Player.STATE_READY) player.prepare();
         if (!player.getPlayWhenReady()) player.setPlayWhenReady(true);
     }
 
