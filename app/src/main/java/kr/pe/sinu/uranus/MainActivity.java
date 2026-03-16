@@ -395,8 +395,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Intent intent = new Intent(this, MediaPlaybackService.class);
-        startService(intent);
-        bindService(intent, connection, BIND_AUTO_CREATE);
+        try {
+            startService(intent);
+            bindService(intent, connection, BIND_AUTO_CREATE);
+        } catch (Exception ignored) {
+            finish();
+            return;
+        }
         rUpdateMpsState.run();
     }
 
