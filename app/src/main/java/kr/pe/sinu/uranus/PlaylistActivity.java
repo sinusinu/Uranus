@@ -363,7 +363,7 @@ public class PlaylistActivity extends AppCompatActivity {
         }
         for (int i = 0; i < playlistUris.size(); i++) {
             var uri = playlistUris.get(i);
-            if (!mmc.isMediaMetadataCached(uri, sizes[i], lastModifiedTss[i])) {
+            if (!mmc.isMediaMetadataCached(this, uri, sizes[i], lastModifiedTss[i])) {
                 binding.rvPlaylistList.setVisibility(View.INVISIBLE);
                 binding.llPlaylistPbrContainer.setVisibility(View.VISIBLE);
                 break;
