@@ -53,7 +53,6 @@ public class PlaylistListItemAdapter extends RecyclerView.Adapter<PlaylistListIt
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        var item = list.get(position);
         holder.tvTitle.setText(list.get(position).name);
         holder.tvSubtitle.setText(String.format(context.getResources().getQuantityText(R.plurals.playlist_list_item_subtitle_count, list.get(position).uris.size()).toString(), list.get(position).uris.size()));
         holder.ivIcon.setImageResource(list.get(position).selected ? R.drawable.ic_ok : R.drawable.ic_playlist);
