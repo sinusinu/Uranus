@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 if (uncastedNewPlaylist != null) {
                     var newPlaylist = new ArrayList<PlaylistItem>(uncastedNewPlaylist.size());
                     for (var pi : uncastedNewPlaylist) newPlaylist.add((PlaylistItem) pi);
-                    // probably not bound on here but better safe than sorry
+                    // if service is not bound right now, keep the changes as pending - pending changes will be applied when the service is bound
                     if (bound) {
                         mps.setPlaylist(newPlaylist);
                         mps.setCurrentPlaylistName(newPlaylistName);
@@ -272,13 +272,6 @@ public class MainActivity extends AppCompatActivity {
         var currentMeta = mps.getMpsCurrentMeta();
         if (currentMeta == null) {
             Log.w("Uranus", "mps meta is null, will be ignored");
-//            binding.tvMainTitle.setText(R.string.main_placeholder_title);
-//            binding.tvMainSubtitle.setText(R.string.main_placeholder_subtitle);
-//            if (currentCover != null && !currentCover.isRecycled()) {
-//                binding.ivMainCover.setImageBitmap(null);
-//                currentCover.recycle();
-//            }
-//            binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
             return;
         }
         String filename = "";
@@ -297,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                 if (artist.equals("??unk")) artist = getString(R.string.main_unknown_artist);
                 var album = currentMeta.album;
                 if (album.equals("??unk")) {
-                    // do not display album title if unknown
+                    // do not display album title if album title is unknown
                     binding.tvMainSubtitle.setText(currentMeta.artist);
                 } else {
                     binding.tvMainSubtitle.setText(String.format(getString(R.string.main_subtitle_aa_format), currentMeta.artist, currentMeta.album));
@@ -327,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
         String album = mm.album;
         binding.tvMainTitle.setText(mm.title);
         if (album.equals("??unk")) {
-            // do not display album title if unknown
+            // do not display album title if album title is unknown
             binding.tvMainSubtitle.setText(artist);
         } else {
             binding.tvMainSubtitle.setText(String.format(getString(R.string.main_subtitle_aa_format), artist, album));
