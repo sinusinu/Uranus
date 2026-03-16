@@ -269,8 +269,7 @@ public class LibraryActivity extends AppCompatActivity {
             new Thread(() -> {
                 boolean mmCacheMissed = false;
 
-                // i really don't understand how this thing works...
-                Uri childUri = null;
+                Uri childUri;
                 if (subtreeUris.empty()) {
                     Uri rootDocumentUri = DocumentsContract.buildDocumentUriUsingTree(currentTreeUri, DocumentsContract.getTreeDocumentId(currentTreeUri));
                     childUri = DocumentsContract.buildChildDocumentsUriUsingTree(currentTreeUri, DocumentsContract.getDocumentId(rootDocumentUri));
@@ -337,7 +336,7 @@ public class LibraryActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.anim_fade_enter, R.anim.anim_slide_enter);
     }
 
-    private class LibraryFolder {
+    private static class LibraryFolder {
         public String name;
         public Uri uri;
 
