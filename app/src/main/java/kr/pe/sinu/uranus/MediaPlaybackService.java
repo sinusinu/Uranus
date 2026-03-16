@@ -62,7 +62,6 @@ public class MediaPlaybackService extends Service {
     private int repeatMode = REPEAT_MODE_NO_REPEAT;
 
     private ArrayList<PlaylistItem> playlist;
-    private MediaMetadata nowPlayingMetadata = null;
     private String playlistName;
 
     private MpsEventListener eventListener;
@@ -91,7 +90,6 @@ public class MediaPlaybackService extends Service {
 
             @Override
             public void onMediaMetadataChanged(@NonNull MediaMetadata mediaMetadata) {
-                nowPlayingMetadata = mediaMetadata;
                 updateNotification();
                 if (eventListener != null) eventListener.onMediaChanged();
             }
@@ -151,6 +149,11 @@ public class MediaPlaybackService extends Service {
 
     public void setPlaylist(ArrayList<PlaylistItem> newPlaylist) {
         playlist.clear();
+        if (newPlaylist.isEmpty()) {
+            player.setMediaItems(new ArrayList<>(), true);
+            player.stop();
+            return;
+        }
         playlist.addAll(newPlaylist);
         ArrayList<MediaItem> playerPlaylist = new ArrayList<>(newPlaylist.size());
         for (var pi : newPlaylist) playerPlaylist.add(MediaItem.fromUri(pi.uriSource));
@@ -222,7 +225,8 @@ public class MediaPlaybackService extends Service {
     public MpsMeta getMpsCurrentMeta() {
         if (player.getPlaybackState() != Player.STATE_READY) return null;
         var currentPlayingIndex = getCurrentPlayingIndex();
-        String title = (nowPlayingMetadata.title != null ? nowPlayingMetadata.title.toString() : playlist.get(currentPlayingIndex).filename);
+        var nowPlayingMetadata = player.getMediaMetadata();
+        String title = (nowPlayingMetadata.title != null ? nowPlayingMetadata.title.toString() : Util.stripFileExt(playlist.get(currentPlayingIndex).filename));
         String artist = "??unk";
         if (nowPlayingMetadata.artist != null) artist = nowPlayingMetadata.artist.toString();
         String album = "??unk";
@@ -301,7 +305,9 @@ public class MediaPlaybackService extends Service {
                 .setStyle(new MediaStyleNotificationHelper.MediaStyle(mediaSession))
                 .setDeleteIntent(PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_IMMUTABLE))
                 .setOngoing(false);
-        if (getCurrentPlayingIndex() != -1 && nowPlayingMetadata != null && nowPlayingMetadata.title == null) {
+
+        var nowPlayingMetadata = player.getMediaMetadata();
+        if (getCurrentPlayingIndex() != -1 && nowPlayingMetadata != MediaMetadata.EMPTY && nowPlayingMetadata.title == null) {
             notifBuilder.setContentTitle(Util.stripFileExt(playlist.get(getCurrentPlayingIndex()).filename));
         }
         var notif = notifBuilder.build();
