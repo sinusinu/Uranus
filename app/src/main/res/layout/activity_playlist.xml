@@ -84,6 +84,19 @@
             android:padding="12dp"
             app:srcCompat="@drawable/ic_add" />
 
+        <ImageView
+            android:id="@+id/iv_playlist_sel_remove"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_weight="0"
+            android:background="@drawable/background_selectable"
+            android:clickable="true"
+            android:contentDescription="@string/acc_remove"
+            android:focusable="true"
+            android:padding="12dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_remove" />
+
         <Space
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -100,6 +113,19 @@
             android:focusable="true"
             android:padding="12dp"
             app:srcCompat="@drawable/ic_delete_sweep" />
+
+        <ImageView
+            android:id="@+id/iv_playlist_sel_deselect_all"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_weight="0"
+            android:background="@drawable/background_selectable"
+            android:clickable="true"
+            android:contentDescription="@string/acc_deselect_all"
+            android:focusable="true"
+            android:padding="12dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_deselect" />
 
         <Space
             android:layout_width="wrap_content"
@@ -118,6 +144,19 @@
             android:padding="12dp"
             app:srcCompat="@drawable/ic_load" />
 
+        <ImageView
+            android:id="@+id/iv_playlist_sel_move_up"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_weight="0"
+            android:background="@drawable/background_selectable"
+            android:clickable="true"
+            android:contentDescription="@string/acc_move_up"
+            android:focusable="true"
+            android:padding="12dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_arrow_upward" />
+
         <Space
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -134,6 +173,19 @@
             android:focusable="true"
             android:padding="12dp"
             app:srcCompat="@drawable/ic_save" />
+
+        <ImageView
+            android:id="@+id/iv_playlist_sel_move_down"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_weight="0"
+            android:background="@drawable/background_selectable"
+            android:clickable="true"
+            android:contentDescription="@string/acc_move_down"
+            android:focusable="true"
+            android:padding="12dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_arrow_downward" />
 
         <Space
             android:layout_width="wrap_content"

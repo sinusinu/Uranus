@@ -13,12 +13,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapter.ViewHolder> {
     private ArrayList<PlaylistItem> list;
+    private HashSet<Integer> selected;
+    private OnItemClickListener onItemClickListener;
 
-    public PlaylistItemAdapter(ArrayList<PlaylistItem> list) {
+    public PlaylistItemAdapter(ArrayList<PlaylistItem> list, HashSet<Integer> selected, OnItemClickListener onItemClickListener) {
         this.list = list;
+        this.selected = selected;
+        this.onItemClickListener = onItemClickListener;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -46,10 +51,24 @@ public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.tvTitle.setText(list.get(position).title);
         holder.tvSubtitle.setText(list.get(position).filename);
+        if (selected.contains(position)) {
+            holder.ivIcon.setImageResource(R.drawable.ic_ok);
+            holder.itemView.setBackgroundResource(R.drawable.background_selected_selectable);
+        } else {
+            holder.ivIcon.setImageResource(R.drawable.ic_music);
+            holder.itemView.setBackgroundResource(R.drawable.background_selectable);
+        }
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) onItemClickListener.onItemClick(position);
+        });
     }
 
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
     }
 }

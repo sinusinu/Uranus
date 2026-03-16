@@ -53,6 +53,7 @@ public class LibraryItemAdapter extends RecyclerView.Adapter<LibraryItemAdapter.
         var item = list.get(position);
         switch (item.type) {
             case LibraryItem.TYPE_ROOT_FOLDER:
+                holder.itemView.setBackgroundResource(R.drawable.background_selectable);
                 holder.tvSubtitle.setVisibility(View.VISIBLE);
                 holder.ivIcon.setImageResource(R.drawable.ic_folder);
                 holder.tvTitle.setText(item.title);
@@ -63,12 +64,14 @@ public class LibraryItemAdapter extends RecyclerView.Adapter<LibraryItemAdapter.
                 });
                 break;
             case LibraryItem.TYPE_ROOT_ADD_FOLDER:
+                holder.itemView.setBackgroundResource(R.drawable.background_selectable);
                 holder.ivIcon.setImageResource(R.drawable.ic_add);
                 holder.tvTitle.setText(R.string.library_item_add_folder_title);
                 holder.tvSubtitle.setVisibility(View.GONE);
                 holder.ivDelete.setVisibility(View.GONE);
                 break;
             case LibraryItem.TYPE_FOLDER_UP:
+                holder.itemView.setBackgroundResource(R.drawable.background_selectable);
                 holder.ivIcon.setImageResource(R.drawable.ic_arrow_upward);
                 holder.tvTitle.setText(R.string.library_item_up_title);
                 holder.tvSubtitle.setText(R.string.library_item_up_subtitle);
@@ -76,14 +79,20 @@ public class LibraryItemAdapter extends RecyclerView.Adapter<LibraryItemAdapter.
                 holder.ivDelete.setVisibility(View.GONE);
                 break;
             case LibraryItem.TYPE_FOLDER_MUSIC:
-                if (item.selected) holder.ivIcon.setImageResource(R.drawable.ic_ok);
-                else holder.ivIcon.setImageResource(R.drawable.ic_music);
+                if (item.selected) {
+                    holder.ivIcon.setImageResource(R.drawable.ic_ok);
+                    holder.itemView.setBackgroundResource(R.drawable.background_selected_selectable);
+                } else {
+                    holder.ivIcon.setImageResource(R.drawable.ic_music);
+                    holder.itemView.setBackgroundResource(R.drawable.background_selectable);
+                }
                 holder.tvTitle.setText(item.title);
                 holder.tvSubtitle.setText(item.subtitle);
                 holder.tvSubtitle.setVisibility(View.VISIBLE);
                 holder.ivDelete.setVisibility(View.GONE);
                 break;
             case LibraryItem.TYPE_FOLDER_FOLDER:
+                holder.itemView.setBackgroundResource(R.drawable.background_selectable);
                 holder.ivIcon.setImageResource(R.drawable.ic_folder);
                 holder.tvTitle.setText(item.title);
                 holder.tvSubtitle.setText(R.string.library_item_folder_subtitle);
@@ -91,6 +100,7 @@ public class LibraryItemAdapter extends RecyclerView.Adapter<LibraryItemAdapter.
                 holder.ivDelete.setVisibility(View.GONE);
                 break;
             default:
+                holder.itemView.setBackgroundResource(R.drawable.background_selectable);
                 holder.ivDelete.setVisibility(View.GONE);
                 holder.tvSubtitle.setVisibility(View.VISIBLE);
                 break;

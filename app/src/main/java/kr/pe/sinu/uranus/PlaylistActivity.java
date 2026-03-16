@@ -32,6 +32,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 
 import kr.pe.sinu.uranus.databinding.ActivityPlaylistBinding;
 
@@ -46,7 +48,9 @@ public class PlaylistActivity extends AppCompatActivity {
     ActivityPlaylistBinding binding;
 
     ArrayList<PlaylistItem> playlist;
+    HashSet<Integer> selected;
     PlaylistItemAdapter adapter;
+    PlaylistItemClickListener onItemClickListener;
 
     String playlistName;
 
@@ -71,7 +75,9 @@ public class PlaylistActivity extends AppCompatActivity {
         });
 
         playlist = new ArrayList<>();
-        adapter = new PlaylistItemAdapter(playlist);
+        selected = new HashSet<>();
+        onItemClickListener = new PlaylistItemClickListener();
+        adapter = new PlaylistItemAdapter(playlist, selected, onItemClickListener);
 
         binding.rvPlaylistList.setLayoutManager(new LinearLayoutManager(this));
         binding.rvPlaylistList.setAdapter(adapter);
@@ -157,6 +163,28 @@ public class PlaylistActivity extends AppCompatActivity {
                 }
             });
         });
+        binding.ivPlaylistSelRemove.setOnClickListener(v -> {
+            for (int i = playlist.size() - 1; i >= 0; i--) {
+                if (selected.contains(i)) playlist.remove(i);
+            }
+            selected.clear();
+            updateSubtitle();
+            updateControlBar();
+            adapter.notifyDataSetChanged();
+        });
+        binding.ivPlaylistSelDeselectAll.setOnClickListener(v -> {
+            selected.clear();
+            updateControlBar();
+            adapter.notifyDataSetChanged();
+        });
+        binding.ivPlaylistSelMoveUp.setOnClickListener(v -> {
+            moveSelectionUp();
+            adapter.notifyDataSetChanged();
+        });
+        binding.ivPlaylistSelMoveDown.setOnClickListener(v -> {
+            moveSelectionDown();
+            adapter.notifyDataSetChanged();
+        });
         binding.ivPlaylistOk.setOnClickListener(v -> {
             Intent intent = new Intent();
             intent.putParcelableArrayListExtra(MainActivity.EXTRA_NEW_PLAYLIST, playlist);
@@ -174,6 +202,10 @@ public class PlaylistActivity extends AppCompatActivity {
                 binding.ivPlaylistClear,
                 binding.ivPlaylistSave,
                 binding.ivPlaylistLoad,
+                binding.ivPlaylistSelRemove,
+                binding.ivPlaylistSelDeselectAll,
+                binding.ivPlaylistSelMoveUp,
+                binding.ivPlaylistSelMoveDown,
                 binding.ivPlaylistOk,
                 binding.ivPlaylistCancel,
         }) {
@@ -288,6 +320,8 @@ public class PlaylistActivity extends AppCompatActivity {
         for (String u : tp.uris) uris.add(Uri.parse(u));
         // TODO: verify uris before feeding into spfu func
 
+        playlistName = name;
+        updateSubtitle();
         setPlaylistFromUri(uris, false);
     }
 
@@ -350,5 +384,82 @@ public class PlaylistActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             });
         }).start();
+    }
+
+    private void moveSelectionUp() {
+        if (playlist.size() < 2 || selected.isEmpty()) return;
+        HashSet<Integer> newSelected = new HashSet<>();
+        for (int i = 0; i < playlist.size(); i++) {
+            if (i == 0 && selected.contains(i)) {
+                // first item is selected - don't move, but keep the selection tracked
+                newSelected.add(i);
+            } else if (selected.contains(i)) {
+                if (!newSelected.contains(i - 1)) {
+                    // this item is selected and can be moved up
+                    Collections.swap(playlist, i, i - 1);
+                    newSelected.add(i - 1);
+                } else {
+                    // this item is selected but cannot be moved up
+                    newSelected.add(i);
+                }
+            }
+        }
+        selected.clear();
+        selected.addAll(newSelected);
+    }
+
+    private void moveSelectionDown() {
+        if (playlist.size() < 2 || selected.isEmpty()) return;
+        HashSet<Integer> newSelected = new HashSet<>();
+        for (int i = playlist.size() - 1; i >= 0; i--) {
+            if (i == playlist.size() - 1 && selected.contains(i)) {
+                // last item is selected - don't move, but keep the selection tracked
+                newSelected.add(i);
+            } else if (selected.contains(i)) {
+                if (!newSelected.contains(i + 1)) {
+                    // this item is selected and can be moved down
+                    Collections.swap(playlist, i, i + 1);
+                    newSelected.add(i + 1);
+                } else {
+                    // this item is selected but cannot be moved down
+                    newSelected.add(i);
+                }
+            }
+        }
+        selected.clear();
+        selected.addAll(newSelected);
+    }
+
+    private void updateControlBar() {
+        if (selected.isEmpty()) {
+            binding.ivPlaylistAdd.setVisibility(View.VISIBLE);
+            binding.ivPlaylistClear.setVisibility(View.VISIBLE);
+            binding.ivPlaylistLoad.setVisibility(View.VISIBLE);
+            binding.ivPlaylistSave.setVisibility(View.VISIBLE);
+            binding.ivPlaylistSelRemove.setVisibility(View.GONE);
+            binding.ivPlaylistSelDeselectAll.setVisibility(View.GONE);
+            binding.ivPlaylistSelMoveUp.setVisibility(View.GONE);
+            binding.ivPlaylistSelMoveDown.setVisibility(View.GONE);
+        } else {
+            binding.ivPlaylistAdd.setVisibility(View.GONE);
+            binding.ivPlaylistClear.setVisibility(View.GONE);
+            binding.ivPlaylistLoad.setVisibility(View.GONE);
+            binding.ivPlaylistSave.setVisibility(View.GONE);
+            binding.ivPlaylistSelRemove.setVisibility(View.VISIBLE);
+            binding.ivPlaylistSelDeselectAll.setVisibility(View.VISIBLE);
+            binding.ivPlaylistSelMoveUp.setVisibility(View.VISIBLE);
+            binding.ivPlaylistSelMoveDown.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public class PlaylistItemClickListener implements PlaylistItemAdapter.OnItemClickListener {
+        @Override
+        public void onItemClick(int position) {
+            var isItemSelected = selected.contains(position);
+            if (!isItemSelected) selected.add(position);
+            else selected.remove(position);
+            updateControlBar();
+            adapter.notifyItemChanged(position);
+        }
     }
 }

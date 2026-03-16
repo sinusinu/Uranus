@@ -70,6 +70,10 @@
     <string name="acc_load_playlist">재생목록 불러오기</string>
     <string name="acc_save_playlist">재생목록 저장하기</string>
     <string name="acc_select_all">모두 선택</string>
+    <string name="acc_remove">삭제</string>
+    <string name="acc_deselect_all">선택 해제</string>
+    <string name="acc_move_up">위로</string>
+    <string name="acc_move_down">아래로</string>
     <!-- this is a debug feature and will be removed later -->
     <string name="acc_emergency_escape">돔황챠!!!!!!!!!!!!!!</string>
 
