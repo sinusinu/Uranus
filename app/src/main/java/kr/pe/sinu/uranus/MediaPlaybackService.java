@@ -67,6 +67,8 @@ public class MediaPlaybackService extends Service {
     private MpsEventListener eventListener;
     private NotificationDismissedReceiver dismissedReceiver;
 
+    // FIXME: notification not updating properly when using "Play from" feature?
+
     @OptIn(markerClass = UnstableApi.class)
     @Override
     public void onCreate() {
