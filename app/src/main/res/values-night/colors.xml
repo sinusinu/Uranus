@@ -1,0 +1,4 @@
+<resources>
+    <color name="selected">#1FFFFFFF</color>
+    <color name="selected_selected">#3FFFFFFF</color>
+</resources>
