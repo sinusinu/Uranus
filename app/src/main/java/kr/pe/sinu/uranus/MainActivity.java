@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
         binding.ivMainPlayPause.setOnClickListener(v -> {
             if (bound) {
                 if (mps.isPlaying()) mps.pause();
-                else mps.play();
+                else if (!mps.play()) Toast.makeText(MainActivity.this, R.string.main_error_playlist_empty, Toast.LENGTH_SHORT).show();
             }
         });
         binding.ivMainSettings.setOnClickListener(v -> {

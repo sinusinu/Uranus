@@ -8,6 +8,7 @@
     <string name="main_unknown_album">Unknown Album</string>
     <string name="main_subtitle_aa_format" translatable="false">%s / %s</string>
     <string name="main_no_settings_yet">No settings yet!</string>
+    <string name="main_error_playlist_empty">Playlist is empty!</string>
 
     <string name="playlist_title">Playlist</string>
     <string name="playlist_subtitle_placeholder">New Playlist, 0 songs</string>
