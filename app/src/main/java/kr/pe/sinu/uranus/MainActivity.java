@@ -134,6 +134,18 @@ public class MainActivity extends AppCompatActivity {
                         pendingPlaylistUpdate = newPlaylist;
                         pendingPlaylistNameUpdate = newPlaylistName;
                     }
+                    if (newPlaylist.isEmpty()) {
+                        binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
+                        if (currentCover != null && !currentCover.isRecycled()) {
+                            currentCover.recycle();
+                        }
+                        binding.tvMainTitle.setText(R.string.main_placeholder_title);
+                        binding.tvMainSubtitle.setText(R.string.main_placeholder_subtitle);
+                        binding.tvMainTimeCurrent.setText(R.string.main_placeholder_time);
+                        binding.tvMainTimeTotal.setText(R.string.main_placeholder_time);
+                        binding.sbMainSeekbar.setProgress(0);
+                        binding.sbMainSeekbar.setMax(1);
+                    }
                 }
             }
         });
