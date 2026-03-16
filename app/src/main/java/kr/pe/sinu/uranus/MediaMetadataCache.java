@@ -15,7 +15,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,39 +34,13 @@ public class MediaMetadataCache {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean isMediaMetadataCached(Uri uri, long size, long lastModified) {
+    public boolean isMediaMetadataCached(Context context, Uri uri, long size, long lastModified) {
+        loadCacheIfNot(context);
         return cache.containsKey(getCacheKey(uri, size, lastModified));
     }
 
     public CacheableMediaMetadata getMediaMetadata(Context context, String filename, Uri uri, long size, long lastModified) {
-        if (!isCacheLoaded) {
-            isCacheLoaded = true;
-            File f = new File(context.getCacheDir(), FILENAME_KNOWN_TAGS_JSON);
-            if (f.exists()) {
-                var c = Util.readString(f);
-                synchronized (cache) {
-                    try {
-                        JSONObject j = new JSONObject(c);
-                        var ji = j.keys();
-
-                        while (ji.hasNext()) {
-                            var k = ji.next();
-                            JSONObject ko = j.getJSONObject(k);
-                            CacheableMediaMetadata cmm = new CacheableMediaMetadata(
-                                    ko.getString("title"),
-                                    ko.getString("artist"),
-                                    ko.getString("album"),
-                                    ko.getLong("size"),
-                                    ko.getBoolean("has_cover")
-                            );
-                            cache.put(k, cmm);
-                        }
-                    } catch (JSONException e) {
-                        cache.clear();
-                    }
-                }
-            }
-        }
+        loadCacheIfNot(context);
 
         String cacheId = getCacheKey(uri, size, lastModified);
 
@@ -136,6 +109,37 @@ public class MediaMetadataCache {
         synchronized (cache) {
             cache.clear();
             isCacheLoaded = false;
+        }
+    }
+
+    private void loadCacheIfNot(Context context) {
+        if (!isCacheLoaded) {
+            isCacheLoaded = true;
+            File f = new File(context.getCacheDir(), FILENAME_KNOWN_TAGS_JSON);
+            if (f.exists()) {
+                var c = Util.readString(f);
+                synchronized (cache) {
+                    try {
+                        JSONObject j = new JSONObject(c);
+                        var ji = j.keys();
+
+                        while (ji.hasNext()) {
+                            var k = ji.next();
+                            JSONObject ko = j.getJSONObject(k);
+                            CacheableMediaMetadata cmm = new CacheableMediaMetadata(
+                                    ko.getString("title"),
+                                    ko.getString("artist"),
+                                    ko.getString("album"),
+                                    ko.getLong("size"),
+                                    ko.getBoolean("has_cover")
+                            );
+                            cache.put(k, cmm);
+                        }
+                    } catch (JSONException e) {
+                        cache.clear();
+                    }
+                }
+            }
         }
     }
 

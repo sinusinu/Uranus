@@ -305,7 +305,7 @@ public class LibraryActivity extends AppCompatActivity {
                         } else {
                             if (ALLOWED_EXTENSIONS.contains(Util.getFileExt(name))) {
                                 Uri fileUri = DocumentsContract.buildDocumentUriUsingTree(currentTreeUri, docId);
-                                if (!mmCacheMissed && !mmCache.isMediaMetadataCached(fileUri, size, lastModified)) {
+                                if (!mmCacheMissed && !mmCache.isMediaMetadataCached(LibraryActivity.this, fileUri, size, lastModified)) {
                                     mmCacheMissed = true;
                                     runOnUiThread(() -> {
                                         binding.rvLibraryList.setVisibility(View.GONE);
