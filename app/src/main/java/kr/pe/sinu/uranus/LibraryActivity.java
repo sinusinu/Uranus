@@ -324,6 +324,7 @@ public class LibraryActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     binding.rvLibraryList.setVisibility(View.VISIBLE);
                     binding.llLibraryPbrContainer.setVisibility(View.GONE);
+                    binding.rvLibraryList.scrollToPosition(0);
                     adapter.notifyDataSetChanged();
                 });
             }).start();
