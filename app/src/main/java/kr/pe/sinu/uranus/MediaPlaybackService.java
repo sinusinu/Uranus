@@ -148,6 +148,17 @@ public class MediaPlaybackService extends Service {
     }
 
     public void setPlaylist(ArrayList<PlaylistItem> newPlaylist) {
+        boolean newPlaylistContainsCurrentSong = false;
+        var currentPlayingIndex = getCurrentPlayingIndex();
+        if (currentPlayingIndex != -1) {
+            var currentPlayingItem = playlist.get(currentPlayingIndex);
+            for (var newItems : newPlaylist) {
+                if (newItems.uriSource.equals(currentPlayingItem.uriSource)) {
+                    newPlaylistContainsCurrentSong = true;
+                    break;
+                }
+            }
+        }
         playlist.clear();
         if (newPlaylist.isEmpty()) {
             player.setMediaItems(new ArrayList<>(), true);
@@ -157,7 +168,7 @@ public class MediaPlaybackService extends Service {
         playlist.addAll(newPlaylist);
         ArrayList<MediaItem> playerPlaylist = new ArrayList<>(newPlaylist.size());
         for (var pi : newPlaylist) playerPlaylist.add(MediaItem.fromUri(pi.uriSource));
-        player.setMediaItems(playerPlaylist, false);
+        player.setMediaItems(playerPlaylist, !newPlaylistContainsCurrentSong);
     }
 
     public boolean play() {
