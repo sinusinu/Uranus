@@ -2,7 +2,7 @@
     <string name="app_name">Uranus</string>
 
     <string name="main_placeholder_title">Uranus</string>
-    <string name="main_placeholder_subtitle">Configure Playlist to Begin</string>
+    <string name="main_placeholder_subtitle">Create a playlist to begin</string>
     <string name="main_placeholder_time">0:00</string>
     <string name="main_unknown_artist">Unknown Artist</string>
     <string name="main_unknown_album">Unknown Album</string>
