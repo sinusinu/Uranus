@@ -30,7 +30,23 @@ class Util {
         }
 
         @JvmStatic
-        fun getFilenameWithoutExtFromUri(context: Context, uri: Uri): String {
+        fun stripFileExt(filename: String?): String {
+            if (filename == null) return ""
+            val dotPos = filename.lastIndexOf('.')
+            if (dotPos == -1) {
+                return filename
+            } else {
+                val ext = filename.substring(dotPos + 1).lowercase()
+                return if (LibraryActivity.ALLOWED_EXTENSIONS.any { allowedExt -> ext == allowedExt }) {
+                    filename.substring(0, dotPos)
+                } else {
+                    filename
+                }
+            }
+        }
+
+        @JvmStatic
+        fun getFilenameFromUri(context: Context, uri: Uri): String {
             var name: String = ""
             context.contentResolver.query(
                 uri,
@@ -42,13 +58,6 @@ class Util {
                 if (cursor == null) return ""
                 while (cursor.moveToNext()) {
                     name = cursor.getString(0) ?: ""
-                }
-            }
-            val dotPos = name.lastIndexOf('.')
-            if (dotPos > 0) {
-                val ext = name.substring(dotPos + 1)
-                if (LibraryActivity.ALLOWED_EXTENSIONS.any { allowedExt -> ext == allowedExt }) {
-                    name = name.substring(0, dotPos)
                 }
             }
             return name

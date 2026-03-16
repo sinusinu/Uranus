@@ -372,7 +372,7 @@ public class PlaylistActivity extends AppCompatActivity {
         new Thread(() -> {
             for (int i = 0; i < playlistUris.size(); i++) {
                 var uri = playlistUris.get(i);
-                String filename = Util.getFilenameWithoutExtFromUri(PlaylistActivity.this, uri);
+                String filename = Util.getFilenameFromUri(PlaylistActivity.this, uri);
                 var mm = mmc.getMediaMetadata(PlaylistActivity.this, filename, uri, sizes[i], lastModifiedTss[i]);
                 var pi = new PlaylistItem(uri.toString(), filename, mm.title, mm.artist, mm.album);
                 playlist.add(pi);

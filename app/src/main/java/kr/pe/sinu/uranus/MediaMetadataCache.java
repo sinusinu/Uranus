@@ -84,7 +84,7 @@ public class MediaMetadataCache {
         try (var mmr = new MediaMetadataRetriever()) {
             mmr.setDataSource(context, uri);
             title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-            if (title == null) title = filename;
+            if (title == null) title = Util.stripFileExt(filename);
             artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
             if (artist == null) artist = "??unk";
             album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
