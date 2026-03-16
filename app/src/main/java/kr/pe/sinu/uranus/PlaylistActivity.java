@@ -314,13 +314,28 @@ public class PlaylistActivity extends AppCompatActivity {
             }
         }
         if (tp == null) {
-            // TODO: show error
+            Toast.makeText(this, R.string.playlist_error_playlist_inaccessible, Toast.LENGTH_SHORT).show();
             return;
         }
 
         ArrayList<Uri> uris = new ArrayList<>();
-        for (String u : tp.uris) uris.add(Uri.parse(u));
-        // TODO: verify uris before feeding into spfu func
+        var cr = getContentResolver();
+        boolean complete = true;
+        for (String u : tp.uris) {
+            var uri = Uri.parse(u);
+            boolean fileExists = false;
+            try (var c = cr.query(uri, null, null, null, null)) {
+                fileExists = (c != null) && (c.getCount() > 0);
+            } catch (Exception ignored) {
+                fileExists = false;
+            }
+            if (fileExists) uris.add(uri);
+            else complete = false;
+        }
+
+        if (!complete) {
+            Toast.makeText(this, R.string.playlist_error_some_files_inaccessible, Toast.LENGTH_SHORT).show();
+        }
 
         playlistName = name;
         updateSubtitle();

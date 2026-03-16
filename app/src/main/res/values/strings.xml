@@ -20,6 +20,8 @@
     <string name="playlist_warning_cannot_save_empty_playlist">Empty playlist cannot be saved!</string>
     <string name="playlist_confirm_ok_and_start_from_title">Play from \'%s\'?</string>
     <string name="playlist_confirm_ok_and_start_from_message">The playlist screen will close, and changes on playlist will be saved.</string>
+    <string name="playlist_error_playlist_inaccessible">Failed to load this playlist.</string>
+    <string name="playlist_error_some_files_inaccessible">One or more files in this playlist could not be loaded.</string>
 
     <string name="playlist_save_title">Save Playlist As</string>
     <string name="playlist_save_message">Playlist with same name, if exists, will be overwritten.</string>
