@@ -21,6 +21,7 @@ No support will be provided until the project reaches some stable point.
 - [x] File-based Playlist system
 - [ ] YT-style double-tap to seek
 - [ ] Volume multiplier
+- [ ] Sleep timer
 
 # License
 
