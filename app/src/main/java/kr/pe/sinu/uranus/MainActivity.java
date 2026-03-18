@@ -16,8 +16,13 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -28,6 +33,7 @@ import androidx.appcompat.widget.TooltipCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.PopupWindowCompat;
 import androidx.media3.common.Player;
 
 import java.io.File;
@@ -50,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private Handler handler;
     private Runnable rUpdateMpsState;
     private Bitmap currentCover = null;
+
+    private View viewMoreWindow = null;
+    private PopupWindow pwMoreWindow = null;
 
     private boolean isSeeking = false;
     private boolean wasPlayingOnBeginSeek = false;
@@ -164,6 +173,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        int mwWidthInPx = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 320, getResources().getDisplayMetrics());
+        int mwElevationInPx = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
+
+        viewMoreWindow = getLayoutInflater().inflate(R.layout.popup_more, binding.getRoot(), false);
+        pwMoreWindow = new PopupWindow(viewMoreWindow, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        pwMoreWindow.setWidth(mwWidthInPx);
+        pwMoreWindow.setElevation(mwElevationInPx);
+
+        viewMoreWindow.findViewById(R.id.iv_more_vol_mul).setOnClickListener(v -> {
+            viewMoreWindow.findViewById(R.id.tv_more_title).setVisibility(View.VISIBLE);
+            ((TextView)viewMoreWindow.findViewById(R.id.tv_more_title)).setText(R.string.main_more_vol_mul);
+            viewMoreWindow.findViewById(R.id.ll_more_vol_mul).setVisibility(View.VISIBLE);
+            viewMoreWindow.findViewById(R.id.ll_more_timer).setVisibility(View.GONE);
+
+            viewMoreWindow.post(this::adjustPopupPosition);
+        });
+        viewMoreWindow.findViewById(R.id.iv_more_timer).setOnClickListener(v -> {
+            viewMoreWindow.findViewById(R.id.tv_more_title).setVisibility(View.VISIBLE);
+            ((TextView)viewMoreWindow.findViewById(R.id.tv_more_title)).setText(R.string.main_more_timer);
+            viewMoreWindow.findViewById(R.id.ll_more_vol_mul).setVisibility(View.GONE);
+            viewMoreWindow.findViewById(R.id.ll_more_timer).setVisibility(View.VISIBLE);
+
+            viewMoreWindow.post(this::adjustPopupPosition);
+        });
+
         binding.ivMainPlaylist.setOnClickListener(v -> {
             Intent intent = new Intent(this, PlaylistActivity.class);
             if (bound) {
@@ -198,6 +232,15 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.main_no_settings_yet, Toast.LENGTH_SHORT).show();
         });
         binding.ivMainMore.setOnClickListener(v -> {
+            viewMoreWindow.findViewById(R.id.tv_more_title).setVisibility(View.GONE);
+            viewMoreWindow.findViewById(R.id.ll_more_vol_mul).setVisibility(View.GONE);
+            viewMoreWindow.findViewById(R.id.ll_more_timer).setVisibility(View.GONE);
+
+            viewMoreWindow.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            int popupHeight = viewMoreWindow.getMeasuredHeight();
+            pwMoreWindow.showAsDropDown(binding.ivMainMore, 0, -(popupHeight + binding.ivMainMore.getHeight()));
+        });
+        binding.ivMainEscape.setOnClickListener(v -> {
             if (bound) mps.emergencyEscape();
             finish();
         });
@@ -388,6 +431,19 @@ public class MainActivity extends AppCompatActivity {
             mps.seekTo(binding.sbMainSeekbar.getProgress());
             if (wasPlayingOnBeginSeek) mps.play();
         }
+    }
+
+    private void adjustPopupPosition() {
+        // FIXME: now it kinda works but is super janky, find proper way to do this
+        viewMoreWindow.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int popupHeight = viewMoreWindow.getMeasuredHeight();
+        int[] popupLocation = new int[2];
+        viewMoreWindow.getLocationOnScreen(popupLocation);
+        int[] buttonLocation = new int[2];
+        binding.ivMainMore.getLocationOnScreen(buttonLocation);
+        int newX = popupLocation[0];
+        int newY = buttonLocation[1] - popupHeight;
+        pwMoreWindow.update(newX, newY, -1, -1);
     }
 
     @Override

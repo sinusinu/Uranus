@@ -10,6 +10,14 @@
     <string name="main_no_settings_yet">No settings yet!</string>
     <string name="main_error_playlist_empty">Playlist is empty!</string>
 
+    <string name="main_more_vol_mul">Volume Multiplier</string>
+    <string name="main_more_timer">Sleep Timer</string>
+    <string name="main_more_vol_mul_desc">This value will be multiplied to Uranus\'s audio volume, independent of system\'s. If unsure, keep it at 100%.</string>
+    <string name="main_more_vol_mul_value_placeholder">100%</string>
+    <string name="main_more_timer_desc">If enabled, Uranus will stop playing music on set time.</string>
+    <string name="main_more_timer_enable">Enable Sleep Timer</string>
+    <string name="main_more_timer_time">Time</string>
+
     <string name="playlist_title">Playlist</string>
     <string name="playlist_subtitle_placeholder">New Playlist, 0 songs</string>
     <plurals name="playlist_subtitle_count">

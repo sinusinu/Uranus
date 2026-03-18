@@ -9,6 +9,14 @@
     <string name="main_no_settings_yet">아직 설정할 게 없어요!</string>
     <string name="main_error_playlist_empty">재생목록이 비어있어요!</string>
 
+    <string name="main_more_vol_mul">음량 배수</string>
+    <string name="main_more_timer">수면 타이머</string>
+    <string name="main_more_vol_mul_desc">이 값은 시스템 음량과 별도로 Uranus의 오디오 음량에 곱해집니다. 잘 모르겠다면, 100%로 유지하세요.</string>
+    <string name="main_more_vol_mul_value_placeholder">100%</string>
+    <string name="main_more_timer_desc">사용할 경우, Uranus가 지정된 시간에 음악 재생을 중지합니다.</string>
+    <string name="main_more_timer_enable">수면 타이머 사용</string>
+    <string name="main_more_timer_time">시간</string>
+
     <string name="playlist_title">재생목록</string>
     <string name="playlist_subtitle_placeholder">새 재생목록, 0개 곡</string>
     <plurals name="playlist_subtitle_count">
