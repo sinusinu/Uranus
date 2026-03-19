@@ -59,6 +59,8 @@ public class LibraryActivity extends AppCompatActivity {
     Stack<Uri> subtreeUris;
     Stack<String> folderNames;
 
+    boolean isLoading = false;
+
     ArrayList<Uri> selectedFiles;
     MediaMetadataCache mmCache;
 
@@ -113,7 +115,7 @@ public class LibraryActivity extends AppCompatActivity {
         binding.rvLibraryList.setAdapter(adapter);
 
         binding.ivLibrarySelectAll.setOnClickListener(v -> {
-            if (currentTreeUri == null) return;
+            if (currentTreeUri == null || isLoading) return;
 
             // add non-selected items while checking if everything here is already selected
             boolean isEverythingSelected = true;
@@ -143,12 +145,14 @@ public class LibraryActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
         });
         binding.ivLibraryOk.setOnClickListener(v -> {
+            if (isLoading) return;
             Intent intent = new Intent();
             intent.putParcelableArrayListExtra(PlaylistActivity.EXTRA_URIS_TO_ADD, selectedFiles);
             setResult(RESULT_OK, intent);
             finish();
         });
         binding.ivLibraryCancel.setOnClickListener(v -> {
+            if (isLoading) return;
             setResult(RESULT_CANCELED);
             finish();
         });
@@ -164,6 +168,7 @@ public class LibraryActivity extends AppCompatActivity {
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
+                if (isLoading) return;
                 if (currentTreeUri == null) {
                     // on root, finish activity
                     finish();
@@ -274,6 +279,8 @@ public class LibraryActivity extends AppCompatActivity {
             for (var folderName : folderNames) sb.append(folderName).append('/');
             binding.tvLibrarySubtitle.setText(sb.toString());
 
+            isLoading = true;
+
             new Thread(() -> {
                 boolean mmCacheMissed = false;
 
@@ -334,6 +341,7 @@ public class LibraryActivity extends AppCompatActivity {
                     binding.llLibraryPbrContainer.setVisibility(View.GONE);
                     binding.rvLibraryList.scrollToPosition(0);
                     adapter.notifyDataSetChanged();
+                    isLoading = false;
                 });
             }).start();
         }
