@@ -1,4 +1,5 @@
 <resources>
+    <color name="color_primary">#82D0DE</color>
     <color name="hovered">#0FFFFFFF</color>
     <color name="selected">#1FFFFFFF</color>
     <color name="selected_hovered">#2F000000</color>
