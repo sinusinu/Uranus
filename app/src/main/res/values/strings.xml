@@ -18,8 +18,8 @@
     <string name="main_more_timer_desc">If set, Uranus will stop playing music when the timer reaches zero.</string>
     <string name="main_more_timer_desc_off">Sleep Timer not set</string>
     <string name="main_more_timer_desc_on_template">About %s left</string>
-    <string name="main_more_timer_desc_on_m">%dm</string>
-    <string name="main_more_timer_desc_on_hm">%dh %dm</string>
+    <string name="main_more_timer_desc_on_m">%d min.</string>
+    <string name="main_more_timer_desc_on_hm">%d hr. %d min.</string>
     <string name="main_more_timer_add_5min">+5m</string>
     <string name="main_more_timer_add_15min">+15m</string>
     <string name="main_more_timer_add_30min">+30m</string>

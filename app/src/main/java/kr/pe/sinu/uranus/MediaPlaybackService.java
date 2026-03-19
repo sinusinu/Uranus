@@ -3,6 +3,8 @@
 
 package kr.pe.sinu.uranus;
 
+import static android.content.Intent.ACTION_TIME_TICK;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -62,6 +64,9 @@ public class MediaPlaybackService extends Service {
     private int repeatMode = REPEAT_MODE_NO_REPEAT;
     private int volumeMultiplier = 100;
 
+    private long sleepTimerTargetMinutes = 0;
+    private BroadcastReceiver sleepTimeCheckReceiver;
+
     private ArrayList<PlaylistItem> playlist;
     private String playlistName;
 
@@ -113,6 +118,9 @@ public class MediaPlaybackService extends Service {
         setRepeatMode(sp.getInt("repeat_mode", REPEAT_MODE_NO_REPEAT), false);
         setVolumeMultiplier(Math.clamp(sp.getInt("vol_mul", 100), 0, 100), false);
 
+        sleepTimeCheckReceiver = new SleepTimerCheckReceiver();
+        ContextCompat.registerReceiver(this, sleepTimeCheckReceiver, new IntentFilter(ACTION_TIME_TICK), ContextCompat.RECEIVER_NOT_EXPORTED);
+
         dismissedReceiver = new NotificationDismissedReceiver();
         ContextCompat.registerReceiver(this, dismissedReceiver, new IntentFilter(ACTION_NOTIFICATION_DISMISSED), ContextCompat.RECEIVER_NOT_EXPORTED);
     }
@@ -126,7 +134,7 @@ public class MediaPlaybackService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         eventListener = null;
-        if (playlist.isEmpty()) {
+        if (sleepTimerTargetMinutes == 0 && playlist.isEmpty()) {
             stopSelf();
         }
         return false;
@@ -142,7 +150,8 @@ public class MediaPlaybackService extends Service {
     public void onDestroy() {
         mediaSession.release();
         player.release();
-        unregisterReceiver(dismissedReceiver);
+        try { unregisterReceiver(dismissedReceiver); } catch (Exception ignored) {}
+        try { unregisterReceiver(sleepTimeCheckReceiver); } catch (Exception ignored) {}
         super.onDestroy();
     }
 
@@ -243,6 +252,14 @@ public class MediaPlaybackService extends Service {
         volumeMultiplier = percent;
         player.setVolume(volumeMultiplier / 100f);
         if (save) sp.edit().putInt("vol_mul", percent).apply();
+    }
+
+    public long getSleepTimerTargetMinutes() {
+        return sleepTimerTargetMinutes;
+    }
+
+    public void setSleepTimerTargetMinutes(long timestamp) {
+        sleepTimerTargetMinutes = timestamp;
     }
 
     // TODO: remove this function on release
@@ -359,6 +376,19 @@ public class MediaPlaybackService extends Service {
         public void onReceive(Context context, Intent intent) {
             if (eventListener != null) eventListener.onMpsExiting();
             stopSelf();
+        }
+    }
+
+    public class SleepTimerCheckReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (sleepTimerTargetMinutes == 0) return;
+
+            var nowMins = System.currentTimeMillis() / 60000L;
+            if (sleepTimerTargetMinutes == nowMins) {
+                eventListener.onMpsExiting();
+                stopSelf();
+            }
         }
     }
 }

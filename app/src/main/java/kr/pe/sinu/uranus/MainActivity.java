@@ -4,8 +4,11 @@
 package kr.pe.sinu.uranus;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     PopupMoreBinding mwBinding = null;
     private PopupWindow pwMoreWindow = null;
+    private BroadcastReceiver mwTimerUpdater = null;
 
     private boolean isSeeking = false;
     private boolean wasPlayingOnBeginSeek = false;
@@ -77,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onMpsExiting() {
+            if (pwMoreWindow.isShowing()) pwMoreWindow.dismiss();
             finish();
         }
     }
@@ -185,8 +190,12 @@ public class MainActivity extends AppCompatActivity {
             mwBinding.llMoreVolMul.setVisibility(View.VISIBLE);
             mwBinding.llMoreTimer.setVisibility(View.GONE);
 
-            var volMulValue = sp.getInt("vol_mul", 100);
+            int volMulValue = 100;
+            if (bound) volMulValue = mps.getVolumeMultiplier();
+            else volMulValue = sp.getInt("vol_mul", 100);
+
             mwBinding.sbMoreVolMul.setProgress(volMulValue);
+            mwBinding.tvMoreVolMulValue.setText(String.format(getString(R.string.main_more_vol_mul_value), volMulValue));
 
             mwBinding.getRoot().post(this::adjustPopupPosition);
         });
@@ -195,6 +204,8 @@ public class MainActivity extends AppCompatActivity {
             mwBinding.tvMoreTitle.setText(R.string.main_more_timer);
             mwBinding.llMoreVolMul.setVisibility(View.GONE);
             mwBinding.llMoreTimer.setVisibility(View.VISIBLE);
+
+            updateSleepTimerText();
 
             mwBinding.getRoot().post(this::adjustPopupPosition);
         });
@@ -215,6 +226,26 @@ public class MainActivity extends AppCompatActivity {
                     sp.edit().putInt("vol_mul", mwBinding.sbMoreVolMul.getProgress()).apply();
                 }
             }
+        });
+        mwBinding.btnMoreTimerAdd5min.setOnClickListener(v -> {
+            addSleepTimerTime(5);
+            updateSleepTimerText();
+        });
+        mwBinding.btnMoreTimerAdd15min.setOnClickListener(v -> {
+            addSleepTimerTime(15);
+            updateSleepTimerText();
+        });
+        mwBinding.btnMoreTimerAdd30min.setOnClickListener(v -> {
+            addSleepTimerTime(30);
+            updateSleepTimerText();
+        });
+        mwBinding.btnMoreTimerAdd60min.setOnClickListener(v -> {
+            addSleepTimerTime(60);
+            updateSleepTimerText();
+        });
+        mwBinding.btnMoreTimerCancel.setOnClickListener(v -> {
+            if (bound) mps.setSleepTimerTargetMinutes(0);
+            updateSleepTimerText();
         });
 
         binding.ivMainPlaylist.setOnClickListener(v -> {
@@ -255,11 +286,6 @@ public class MainActivity extends AppCompatActivity {
             mwBinding.llMoreVolMul.setVisibility(View.GONE);
             mwBinding.llMoreTimer.setVisibility(View.GONE);
 
-            int volMulValue = 100;
-            if (bound) volMulValue = mps.getVolumeMultiplier();
-            else volMulValue = sp.getInt("vol_mul", 100);
-            mwBinding.tvMoreVolMulValue.setText(String.format(getString(R.string.main_more_vol_mul_value), volMulValue));
-
             mwBinding.getRoot().measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             int popupHeight = mwBinding.getRoot().getMeasuredHeight();
             pwMoreWindow.showAsDropDown(binding.ivMainMore, 0, -(popupHeight + binding.ivMainMore.getHeight()));
@@ -289,6 +315,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        mwTimerUpdater = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (!pwMoreWindow.isShowing() || mwBinding.llMoreTimer.getVisibility() != View.VISIBLE) return;
+                updateSleepTimerText();
+            }
+        };
 
         for (View v : new View[] {
                 binding.ivMainPlaylist,
@@ -470,6 +504,57 @@ public class MainActivity extends AppCompatActivity {
         pwMoreWindow.update(newX, newY, -1, -1);
     }
 
+    private void addSleepTimerTime(int minutes) {
+        if (bound) {
+            var nowMinutes = System.currentTimeMillis() / 60000L;
+            var currentTimerTargetMinutes = mps.getSleepTimerTargetMinutes();
+            if (currentTimerTargetMinutes == 0) currentTimerTargetMinutes = nowMinutes;
+            var newTimerTargetMinutes = currentTimerTargetMinutes + minutes;
+            if (newTimerTargetMinutes - nowMinutes > 24 * 60) {
+                Toast.makeText(this, R.string.main_more_timer_error_too_long, Toast.LENGTH_SHORT).show();
+            } else {
+                mps.setSleepTimerTargetMinutes(newTimerTargetMinutes);
+            }
+        }
+    }
+
+    private void updateSleepTimerText() {
+        if (bound) {
+            var currentTimerTargetMinutes = mps.getSleepTimerTargetMinutes();
+            if (currentTimerTargetMinutes == 0) {
+                mwBinding.tvMoreTimerValue.setText(R.string.main_more_timer_desc_off);
+            } else {
+                int minutesLeft = (int)(currentTimerTargetMinutes - (System.currentTimeMillis() / 60000L));
+                if (minutesLeft >= 60) {
+                    int hoursLeft = minutesLeft / 60;
+                    minutesLeft = minutesLeft % 60;
+                    mwBinding.tvMoreTimerValue.setText(
+                            String.format(
+                                    getString(R.string.main_more_timer_desc_on_template),
+                                    String.format(
+                                            getString(R.string.main_more_timer_desc_on_hm),
+                                            hoursLeft,
+                                            minutesLeft
+                                    )
+                            )
+                    );
+                } else {
+                    mwBinding.tvMoreTimerValue.setText(
+                            String.format(
+                                    getString(R.string.main_more_timer_desc_on_template),
+                                    String.format(
+                                            getString(R.string.main_more_timer_desc_on_m),
+                                            minutesLeft
+                                    )
+                            )
+                    );
+                }
+            }
+        } else {
+            mwBinding.tvMoreTimerValue.setText(R.string.main_more_timer_desc_off);
+        }
+    }
+
     @Override
     public void finish() {
         super.finish();
@@ -500,5 +585,17 @@ public class MainActivity extends AppCompatActivity {
             unbindService(connection);
             bound = false;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mwTimerUpdater, new IntentFilter(Intent.ACTION_TIME_TICK));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mwTimerUpdater);
     }
 }
