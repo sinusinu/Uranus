@@ -332,6 +332,8 @@ public class MainActivity extends AppCompatActivity {
                 binding.ivMainPlayPause,
                 binding.ivMainSettings,
                 binding.ivMainNext,
+                mwBinding.ivMoreVolMul,
+                mwBinding.ivMoreTimer,
         }) {
             TooltipCompat.setTooltipText(v, v.getContentDescription());
         }

@@ -109,6 +109,8 @@
     <string name="acc_deselect_all">Deselect All</string>
     <string name="acc_move_up">Move Up</string>
     <string name="acc_move_down">Move Down</string>
+    <string name="acc_vol_mul">Volume Multiplier</string>
+    <string name="acc_timer">Sleep Timer</string>
     <!-- this is a debug feature and will be removed later -->
     <string name="acc_emergency_escape">EMERGENCY ESCAPE!1!!!!!</string>
 

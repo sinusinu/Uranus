@@ -96,6 +96,8 @@
     <string name="acc_deselect_all">선택 해제</string>
     <string name="acc_move_up">위로</string>
     <string name="acc_move_down">아래로</string>
+    <string name="acc_vol_mul">음량 배수</string>
+    <string name="acc_timer">수면 타이머</string>
     <!-- this is a debug feature and will be removed later -->
     <string name="acc_emergency_escape">돔황챠!!!!!!!!!!!!!!</string>
 
