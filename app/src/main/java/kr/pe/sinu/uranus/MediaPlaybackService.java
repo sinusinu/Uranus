@@ -91,7 +91,14 @@ public class MediaPlaybackService extends Service {
         player.addListener(new Player.Listener() {
             @Override
             public void onPlaybackStateChanged(int playbackState) {
-                //Log.d("Uranus", "Playback state changed to " + playbackState);
+                if (playbackState == Player.STATE_ENDED && repeatMode == REPEAT_MODE_NO_REPEAT) {
+                    // playback ended with repeat mode set to no repeat
+                    // seek back to the beginning of the last track, keep the player paused
+                    // this should make pressing play button on this state play the last song again
+                    player.setPlayWhenReady(false);
+                    player.seekTo(playlist.size() - 1, 0);
+                    player.prepare();
+                }
                 updateNotification();
                 if (eventListener != null) eventListener.onMediaChanged();
             }
