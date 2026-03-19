@@ -98,8 +98,6 @@
     <string name="acc_move_down">아래로</string>
     <string name="acc_vol_mul">음량 배수</string>
     <string name="acc_timer">수면 타이머</string>
-    <!-- this is a debug feature and will be removed later -->
-    <string name="acc_emergency_escape">돔황챠!!!!!!!!!!!!!!</string>
 
     <string name="service_name">미디어 재생 서비스</string>
     <string name="service_desc">음악을 백그라운드에서 재생하는 데 사용됩니다.</string>

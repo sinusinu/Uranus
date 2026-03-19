@@ -290,10 +290,6 @@ public class MainActivity extends AppCompatActivity {
             int popupHeight = mwBinding.getRoot().getMeasuredHeight();
             pwMoreWindow.showAsDropDown(binding.ivMainMore, 0, -(popupHeight + binding.ivMainMore.getHeight()));
         });
-        binding.ivMainEscape.setOnClickListener(v -> {
-            if (bound) mps.emergencyEscape();
-            finish();
-        });
 
         binding.sbMainSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

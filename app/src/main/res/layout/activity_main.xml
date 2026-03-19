@@ -97,23 +97,6 @@
                 android:layout_weight="0" />
 
             <ImageView
-                android:id="@+id/iv_main_escape"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_weight="0"
-                android:background="@drawable/background_selectable"
-                android:clickable="true"
-                android:contentDescription="@string/acc_emergency_escape"
-                android:focusable="true"
-                android:padding="12dp"
-                app:srcCompat="@drawable/ic_bomb" />
-
-            <Space
-                android:layout_width="8dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0" />
-
-            <ImageView
                 android:id="@+id/iv_main_more"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
