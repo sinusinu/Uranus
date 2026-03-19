@@ -13,9 +13,17 @@
     <string name="main_more_timer">수면 타이머</string>
     <string name="main_more_vol_mul_desc">이 값은 시스템 음량과 별도로 Uranus의 오디오 음량에 곱해집니다. 잘 모르겠다면, 100%로 유지하세요.</string>
     <string name="main_more_vol_mul_value_placeholder">100%</string>
-    <string name="main_more_timer_desc">사용할 경우, Uranus가 지정된 시간에 음악 재생을 중지합니다.</string>
-    <string name="main_more_timer_enable">수면 타이머 사용</string>
-    <string name="main_more_timer_time">시간</string>
+    <string name="main_more_timer_desc">설정한 시간이 지나면 Uranus가 음악 재생을 중지합니다.</string>
+    <string name="main_more_timer_desc_off">타이머 설정 안 됨</string>
+    <string name="main_more_timer_desc_on_template">약 %s 남음</string>
+    <string name="main_more_timer_desc_on_m">%d분</string>
+    <string name="main_more_timer_desc_on_hm">%d시간 %d분</string>
+    <string name="main_more_timer_add_5min">+5분</string>
+    <string name="main_more_timer_add_15min">+15분</string>
+    <string name="main_more_timer_add_30min">+30분</string>
+    <string name="main_more_timer_add_60min">+1시간</string>
+    <string name="main_more_timer_cancel">취소</string>
+    <string name="main_more_timer_error_too_long">수면 타이머는 24시간을 초과할 수 없습니다!</string>
 
     <string name="playlist_title">재생목록</string>
     <string name="playlist_subtitle_placeholder">새 재생목록, 0개 곡</string>

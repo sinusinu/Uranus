@@ -14,9 +14,17 @@
     <string name="main_more_timer">Sleep Timer</string>
     <string name="main_more_vol_mul_desc">This value will be multiplied to Uranus\'s audio volume, independent of system\'s. If unsure, keep it at 100%.</string>
     <string name="main_more_vol_mul_value_placeholder">100%</string>
-    <string name="main_more_timer_desc">If enabled, Uranus will stop playing music on set time.</string>
-    <string name="main_more_timer_enable">Enable Sleep Timer</string>
-    <string name="main_more_timer_time">Time</string>
+    <string name="main_more_timer_desc">If set, Uranus will stop playing music when the timer reaches zero.</string>
+    <string name="main_more_timer_desc_off">Sleep Timer not set</string>
+    <string name="main_more_timer_desc_on_template">About %s left</string>
+    <string name="main_more_timer_desc_on_m">%dm</string>
+    <string name="main_more_timer_desc_on_hm">%dh %dm</string>
+    <string name="main_more_timer_add_5min">+5m</string>
+    <string name="main_more_timer_add_15min">+15m</string>
+    <string name="main_more_timer_add_30min">+30m</string>
+    <string name="main_more_timer_add_60min">+1h</string>
+    <string name="main_more_timer_cancel">Cancel</string>
+    <string name="main_more_timer_error_too_long">Sleep Timer cannot exceed 24 hours!</string>
 
     <string name="playlist_title">Playlist</string>
     <string name="playlist_subtitle_placeholder">New Playlist, 0 songs</string>

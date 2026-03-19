@@ -40,6 +40,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import kr.pe.sinu.uranus.databinding.ActivityMainBinding;
+import kr.pe.sinu.uranus.databinding.PopupMoreBinding;
 
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_NEW_PLAYLIST = "new_playlist";
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private Runnable rUpdateMpsState;
     private Bitmap currentCover = null;
 
-    private View viewMoreWindow = null;
+    PopupMoreBinding mwBinding = null;
     private PopupWindow pwMoreWindow = null;
 
     private boolean isSeeking = false;
@@ -176,26 +177,29 @@ public class MainActivity extends AppCompatActivity {
         int mwWidthInPx = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 320, getResources().getDisplayMetrics());
         int mwElevationInPx = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
 
-        viewMoreWindow = getLayoutInflater().inflate(R.layout.popup_more, binding.getRoot(), false);
-        pwMoreWindow = new PopupWindow(viewMoreWindow, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        mwBinding = PopupMoreBinding.inflate(getLayoutInflater(), binding.getRoot(), false);
+        pwMoreWindow = new PopupWindow(mwBinding.getRoot(), ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
         pwMoreWindow.setWidth(mwWidthInPx);
         pwMoreWindow.setElevation(mwElevationInPx);
 
-        viewMoreWindow.findViewById(R.id.iv_more_vol_mul).setOnClickListener(v -> {
-            viewMoreWindow.findViewById(R.id.tv_more_title).setVisibility(View.VISIBLE);
-            ((TextView)viewMoreWindow.findViewById(R.id.tv_more_title)).setText(R.string.main_more_vol_mul);
-            viewMoreWindow.findViewById(R.id.ll_more_vol_mul).setVisibility(View.VISIBLE);
-            viewMoreWindow.findViewById(R.id.ll_more_timer).setVisibility(View.GONE);
+        mwBinding.ivMoreVolMul.setOnClickListener(v -> {
+            mwBinding.tvMoreTitle.setVisibility(View.VISIBLE);
+            mwBinding.tvMoreTitle.setText(R.string.main_more_vol_mul);
+            mwBinding.llMoreVolMul.setVisibility(View.VISIBLE);
+            mwBinding.llMoreTimer.setVisibility(View.GONE);
 
-            viewMoreWindow.post(this::adjustPopupPosition);
+            var volMulValue = sp.getInt("vol_mul", 100);
+            mwBinding.sbMoreVolMul.setProgress(volMulValue);
+
+            mwBinding.getRoot().post(this::adjustPopupPosition);
         });
-        viewMoreWindow.findViewById(R.id.iv_more_timer).setOnClickListener(v -> {
-            viewMoreWindow.findViewById(R.id.tv_more_title).setVisibility(View.VISIBLE);
-            ((TextView)viewMoreWindow.findViewById(R.id.tv_more_title)).setText(R.string.main_more_timer);
-            viewMoreWindow.findViewById(R.id.ll_more_vol_mul).setVisibility(View.GONE);
-            viewMoreWindow.findViewById(R.id.ll_more_timer).setVisibility(View.VISIBLE);
+        mwBinding.ivMoreTimer.setOnClickListener(v -> {
+            mwBinding.tvMoreTitle.setVisibility(View.VISIBLE);
+            mwBinding.tvMoreTitle.setText(R.string.main_more_timer);
+            mwBinding.llMoreVolMul.setVisibility(View.GONE);
+            mwBinding.llMoreTimer.setVisibility(View.VISIBLE);
 
-            viewMoreWindow.post(this::adjustPopupPosition);
+            mwBinding.getRoot().post(this::adjustPopupPosition);
         });
 
         binding.ivMainPlaylist.setOnClickListener(v -> {
@@ -232,12 +236,12 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.main_no_settings_yet, Toast.LENGTH_SHORT).show();
         });
         binding.ivMainMore.setOnClickListener(v -> {
-            viewMoreWindow.findViewById(R.id.tv_more_title).setVisibility(View.GONE);
-            viewMoreWindow.findViewById(R.id.ll_more_vol_mul).setVisibility(View.GONE);
-            viewMoreWindow.findViewById(R.id.ll_more_timer).setVisibility(View.GONE);
+            mwBinding.tvMoreTitle.setVisibility(View.GONE);
+            mwBinding.llMoreVolMul.setVisibility(View.GONE);
+            mwBinding.llMoreTimer.setVisibility(View.GONE);
 
-            viewMoreWindow.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            int popupHeight = viewMoreWindow.getMeasuredHeight();
+            mwBinding.getRoot().measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            int popupHeight = mwBinding.getRoot().getMeasuredHeight();
             pwMoreWindow.showAsDropDown(binding.ivMainMore, 0, -(popupHeight + binding.ivMainMore.getHeight()));
         });
         binding.ivMainEscape.setOnClickListener(v -> {
@@ -435,10 +439,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void adjustPopupPosition() {
         // FIXME: now it kinda works but is super janky, find proper way to do this
-        viewMoreWindow.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int popupHeight = viewMoreWindow.getMeasuredHeight();
+        mwBinding.getRoot().measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int popupHeight = mwBinding.getRoot().getMeasuredHeight();
         int[] popupLocation = new int[2];
-        viewMoreWindow.getLocationOnScreen(popupLocation);
+        mwBinding.getRoot().getLocationOnScreen(popupLocation);
         int[] buttonLocation = new int[2];
         binding.ivMainMore.getLocationOnScreen(buttonLocation);
         int newX = popupLocation[0];
