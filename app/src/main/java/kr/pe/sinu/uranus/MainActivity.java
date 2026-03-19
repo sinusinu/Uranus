@@ -198,6 +198,24 @@ public class MainActivity extends AppCompatActivity {
 
             mwBinding.getRoot().post(this::adjustPopupPosition);
         });
+        mwBinding.sbMoreVolMul.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mwBinding.tvMoreVolMulValue.setText(String.format(getString(R.string.main_more_vol_mul_value), progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (bound) {
+                    mps.setVolumeMultiplier(mwBinding.sbMoreVolMul.getProgress(), true);
+                } else {
+                    sp.edit().putInt("vol_mul", mwBinding.sbMoreVolMul.getProgress()).apply();
+                }
+            }
+        });
 
         binding.ivMainPlaylist.setOnClickListener(v -> {
             Intent intent = new Intent(this, PlaylistActivity.class);
@@ -219,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
                 var repeatMode = mps.getRepeatMode();
                 repeatMode += 1;
                 if (repeatMode == 4) repeatMode = 0;
-                mps.setRepeatMode(repeatMode);
+                mps.setRepeatMode(repeatMode, true);
                 updateRepeatModeIcon(repeatMode);
             }
         });
@@ -236,6 +254,9 @@ public class MainActivity extends AppCompatActivity {
             mwBinding.tvMoreTitle.setVisibility(View.GONE);
             mwBinding.llMoreVolMul.setVisibility(View.GONE);
             mwBinding.llMoreTimer.setVisibility(View.GONE);
+
+            var volMulValue = sp.getInt("vol_mul", 100);
+            mwBinding.tvMoreVolMulValue.setText(String.format(getString(R.string.main_more_vol_mul_value), volMulValue));
 
             mwBinding.getRoot().measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             int popupHeight = mwBinding.getRoot().getMeasuredHeight();

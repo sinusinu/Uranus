@@ -12,6 +12,7 @@
     <string name="main_more_vol_mul">음량 배수</string>
     <string name="main_more_timer">수면 타이머</string>
     <string name="main_more_vol_mul_desc">이 값은 시스템 음량과 별도로 Uranus의 오디오 음량에 곱해집니다. 잘 모르겠다면, 100%로 유지하세요.</string>
+    <string name="main_more_vol_mul_value">%d%%</string>
     <string name="main_more_vol_mul_value_placeholder">100%</string>
     <string name="main_more_timer_desc">설정한 시간이 지나면 Uranus가 음악 재생을 중지합니다.</string>
     <string name="main_more_timer_desc_off">타이머 설정 안 됨</string>

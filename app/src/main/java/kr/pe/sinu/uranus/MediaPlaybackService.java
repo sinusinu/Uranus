@@ -60,6 +60,7 @@ public class MediaPlaybackService extends Service {
 
     private SharedPreferences sp;
     private int repeatMode = REPEAT_MODE_NO_REPEAT;
+    private int volumeMultiplierPercent = 100;
 
     private ArrayList<PlaylistItem> playlist;
     private String playlistName;
@@ -109,8 +110,8 @@ public class MediaPlaybackService extends Service {
         playlistName = getString(R.string.common_default_playlist_name);
 
         sp = getSharedPreferences("kr.pe.sinu.uranus.prefs", MODE_PRIVATE);
-        repeatMode = sp.getInt("repeat_mode", REPEAT_MODE_NO_REPEAT);
-        setRepeatMode(repeatMode, false);
+        setRepeatMode(sp.getInt("repeat_mode", REPEAT_MODE_NO_REPEAT), false);
+        setVolumeMultiplier(Math.clamp(sp.getInt("vol_mul", 100), 0, 100), false);
 
         dismissedReceiver = new NotificationDismissedReceiver();
         ContextCompat.registerReceiver(this, dismissedReceiver, new IntentFilter(ACTION_NOTIFICATION_DISMISSED), ContextCompat.RECEIVER_NOT_EXPORTED);
@@ -210,7 +211,6 @@ public class MediaPlaybackService extends Service {
 
     public int getRepeatMode() { return repeatMode; }
 
-    public void setRepeatMode(int repeatMode) { setRepeatMode(repeatMode, true); }
     public void setRepeatMode(int repeatMode, boolean save) {
         this.repeatMode = repeatMode;
         if (save) sp.edit().putInt("repeat_mode", repeatMode).apply();
@@ -233,6 +233,12 @@ public class MediaPlaybackService extends Service {
                 player.setShuffleModeEnabled(true);
                 break;
         }
+    }
+
+    public void setVolumeMultiplier(int percent, boolean save) {
+        volumeMultiplierPercent = percent;
+        player.setVolume(volumeMultiplierPercent / 100f);
+        if (save) sp.edit().putInt("vol_mul", percent).apply();
     }
 
     // TODO: remove this function on release

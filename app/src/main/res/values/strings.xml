@@ -13,6 +13,7 @@
     <string name="main_more_vol_mul">Volume Multiplier</string>
     <string name="main_more_timer">Sleep Timer</string>
     <string name="main_more_vol_mul_desc">This value will be multiplied to Uranus\'s audio volume, independent of system\'s. If unsure, keep it at 100%.</string>
+    <string name="main_more_vol_mul_value">%d%%</string>
     <string name="main_more_vol_mul_value_placeholder">100%</string>
     <string name="main_more_timer_desc">If set, Uranus will stop playing music when the timer reaches zero.</string>
     <string name="main_more_timer_desc_off">Sleep Timer not set</string>
