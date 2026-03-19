@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private int pendingJumpPosIndex = -1;
 
     private ActivityResultLauncher<Intent> playlistResult;
+    private ActivityResultLauncher<Intent> settingsResult;
 
     public MpsEventListener mpsEventListener;
     public class MpsEventListener implements MediaPlaybackService.MpsEventListener {
@@ -176,6 +177,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        settingsResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), (result) -> {
+            if (result.getData() != null) {
+                // do something if command comes
+            }
+        });
+
         int mwWidthInPx = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 320, getResources().getDisplayMetrics());
         int mwElevationInPx = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
 
@@ -279,7 +286,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         binding.ivMainSettings.setOnClickListener(v -> {
-            Toast.makeText(this, R.string.main_no_settings_yet, Toast.LENGTH_SHORT).show();
+            settingsResult.launch(new Intent(this, SettingsActivity.class));
+            overridePendingTransition(R.anim.anim_slide_exit, R.anim.anim_fade_exit);
         });
         binding.ivMainMore.setOnClickListener(v -> {
             mwBinding.tvMoreTitle.setVisibility(View.GONE);

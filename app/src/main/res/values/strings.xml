@@ -7,7 +7,6 @@
     <string name="main_unknown_artist">Unknown Artist</string>
     <string name="main_unknown_album">Unknown Album</string>
     <string name="main_subtitle_aa_format" translatable="false">%s / %s</string>
-    <string name="main_no_settings_yet">No settings yet!</string>
     <string name="main_error_playlist_empty">Playlist is empty!</string>
 
     <string name="main_more_vol_mul">Volume Multiplier</string>
@@ -86,6 +85,16 @@
     <string name="library_item_subtitle_placeholder" translatable="false">/storage/emulated/0/Music</string>
 
     <string name="settings_title">Settings</string>
+    <string name="settings_category_troubleshooting">Troubleshooting</string>
+    <string name="settings_item_clear_cache_title">Clear Cache</string>
+    <string name="settings_item_clear_cache_desc">Clear the tag cache. Write a better description later.</string>
+    <string name="settings_category_about">About</string>
+    <string name="settings_item_about_title" translatable="false">Uranus %s</string>
+    <string name="settings_item_about_desc" translatable="false">© 2026 sinu</string>
+
+    <string name="settings_item_category_placeholder" translatable="false">General</string>
+    <string name="settings_item_title_placeholder" translatable="false">Some Option</string>
+    <string name="settings_item_subtitle_placeholder" translatable="false">If enabled, it might do something.</string>
 
     <string name="acc_cover">Cover Art</string>
     <string name="acc_play">Play</string>
