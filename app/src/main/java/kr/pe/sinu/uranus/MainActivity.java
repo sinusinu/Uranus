@@ -17,12 +17,10 @@ import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -33,7 +31,6 @@ import androidx.appcompat.widget.TooltipCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.core.widget.PopupWindowCompat;
 import androidx.media3.common.Player;
 
 import java.io.File;
@@ -321,9 +318,9 @@ public class MainActivity extends AppCompatActivity {
             Log.w("Uranus", "mps meta is null, will be ignored");
             return;
         }
-        String filename = "";
-        long size = 0;
-        long lastModified = 0;
+        String filename;
+        long size;
+        long lastModified;
         try (var cursor = getContentResolver().query(currentMeta.uri, new String[] {
                 DocumentsContract.Document.COLUMN_DISPLAY_NAME,
                 DocumentsContract.Document.COLUMN_SIZE,
@@ -338,9 +335,9 @@ public class MainActivity extends AppCompatActivity {
                 var album = currentMeta.album;
                 if (album.equals("??unk")) {
                     // do not display album title if album title is unknown
-                    binding.tvMainSubtitle.setText(currentMeta.artist);
+                    binding.tvMainSubtitle.setText(artist);
                 } else {
-                    binding.tvMainSubtitle.setText(String.format(getString(R.string.main_subtitle_aa_format), currentMeta.artist, currentMeta.album));
+                    binding.tvMainSubtitle.setText(String.format(getString(R.string.main_subtitle_aa_format), artist, currentMeta.album));
                 }
                 binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
                 return;
