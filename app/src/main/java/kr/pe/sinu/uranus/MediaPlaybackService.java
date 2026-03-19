@@ -385,7 +385,7 @@ public class MediaPlaybackService extends Service {
             if (sleepTimerTargetMinutes == 0) return;
 
             var nowMins = System.currentTimeMillis() / 60000L;
-            if (sleepTimerTargetMinutes == nowMins) {
+            if (sleepTimerTargetMinutes <= nowMins) {
                 eventListener.onMpsExiting();
                 stopSelf();
             }
