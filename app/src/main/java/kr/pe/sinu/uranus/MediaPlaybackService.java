@@ -60,7 +60,7 @@ public class MediaPlaybackService extends Service {
 
     private SharedPreferences sp;
     private int repeatMode = REPEAT_MODE_NO_REPEAT;
-    private int volumeMultiplierPercent = 100;
+    private int volumeMultiplier = 100;
 
     private ArrayList<PlaylistItem> playlist;
     private String playlistName;
@@ -235,9 +235,13 @@ public class MediaPlaybackService extends Service {
         }
     }
 
+    public int getVolumeMultiplier() {
+        return volumeMultiplier;
+    }
+
     public void setVolumeMultiplier(int percent, boolean save) {
-        volumeMultiplierPercent = percent;
-        player.setVolume(volumeMultiplierPercent / 100f);
+        volumeMultiplier = percent;
+        player.setVolume(volumeMultiplier / 100f);
         if (save) sp.edit().putInt("vol_mul", percent).apply();
     }
 

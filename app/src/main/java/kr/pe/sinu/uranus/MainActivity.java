@@ -255,7 +255,9 @@ public class MainActivity extends AppCompatActivity {
             mwBinding.llMoreVolMul.setVisibility(View.GONE);
             mwBinding.llMoreTimer.setVisibility(View.GONE);
 
-            var volMulValue = sp.getInt("vol_mul", 100);
+            int volMulValue = 100;
+            if (bound) volMulValue = mps.getVolumeMultiplier();
+            else volMulValue = sp.getInt("vol_mul", 100);
             mwBinding.tvMoreVolMulValue.setText(String.format(getString(R.string.main_more_vol_mul_value), volMulValue));
 
             mwBinding.getRoot().measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
