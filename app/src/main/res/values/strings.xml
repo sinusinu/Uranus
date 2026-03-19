@@ -66,7 +66,7 @@
     </plurals>
 
     <string name="library_title">Library</string>
-    <string name="library_subtitle_root">Select Files to Add</string>
+    <string name="library_subtitle_root">Select a folder</string>
     <string name="library_selected_placeholder">0 files selected</string>
     <plurals name="library_selected_count">
         <item quantity="one">%d file selected</item>

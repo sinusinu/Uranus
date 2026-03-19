@@ -57,6 +57,7 @@ public class LibraryActivity extends AppCompatActivity {
     ArrayList<LibraryFolder> folders;
     Uri currentTreeUri = null;
     Stack<Uri> subtreeUris;
+    Stack<String> folderNames;
 
     ArrayList<Uri> selectedFiles;
     MediaMetadataCache mmCache;
@@ -77,6 +78,7 @@ public class LibraryActivity extends AppCompatActivity {
         });
 
         subtreeUris = new Stack<>();
+        folderNames = new Stack<>();
         selectedFiles = new ArrayList<>();
         mmCache = MediaMetadataCache.getInstance();
 
@@ -173,6 +175,7 @@ public class LibraryActivity extends AppCompatActivity {
                     refreshDisplayList();
                 } else {
                     // can go up
+                    folderNames.pop();
                     currentTreeUri = subtreeUris.pop();
                     refreshDisplayList();
                 }
@@ -263,8 +266,13 @@ public class LibraryActivity extends AppCompatActivity {
             }
             displayList.add(LibraryItem.asRootAddFolder());
             adapter.notifyDataSetChanged();
+            binding.tvLibrarySubtitle.setText(R.string.library_subtitle_root);
         } else {
             displayList.add(LibraryItem.asFolderUp());
+
+            var sb = new StringBuilder("/");
+            for (var folderName : folderNames) sb.append(folderName).append('/');
+            binding.tvLibrarySubtitle.setText(sb.toString());
 
             new Thread(() -> {
                 boolean mmCacheMissed = false;
@@ -357,9 +365,11 @@ public class LibraryActivity extends AppCompatActivity {
                     break;
                 case LibraryItem.TYPE_ROOT_FOLDER:
                     currentTreeUri = Uri.parse(item.target);
+                    folderNames.push(item.title);
                     refreshDisplayList();
                     break;
                 case LibraryItem.TYPE_FOLDER_UP:
+                    folderNames.pop();
                     if (subtreeUris.empty()) {
                         // can't go up, go back to root menu
                         currentTreeUri = null;
@@ -386,6 +396,7 @@ public class LibraryActivity extends AppCompatActivity {
                 case LibraryItem.TYPE_FOLDER_FOLDER:
                     Uri targetSubtreeUri = Uri.parse(item.target);
                     subtreeUris.push(targetSubtreeUri);
+                    folderNames.push(item.title);
                     currentTreeUri = targetSubtreeUri;
                     refreshDisplayList();
                     break;
