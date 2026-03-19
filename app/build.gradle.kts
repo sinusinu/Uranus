@@ -32,6 +32,10 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    androidResources {
+        @Suppress("UnstableApiUsage")
+        localeFilters += listOf("en", "ko")
+    }
 }
 
 dependencies {
