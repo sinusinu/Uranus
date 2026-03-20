@@ -6,9 +6,15 @@ As with many of my projects, Uranus is made mainly for my personal use.
 
 # Work in Progress
 
-Uranus is currently in an early stage of development: barely works, lots of problems, fine by me.
+Uranus is currently in an early stage of development.
 
 No support will be provided until the project reaches some stable point.
+
+# Download
+
+Grab the APK from [here](https://github.com/sinusinu/Uranus/releases/latest).
+
+Remember, no support. I don't accept any bug reports or pull requests for now.
 
 # What's *opinionated* about it?
 
