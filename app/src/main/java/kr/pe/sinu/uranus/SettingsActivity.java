@@ -53,6 +53,7 @@ public class SettingsActivity extends AppCompatActivity {
     public class SettingsItemClickListener implements SettingsAdapter.OnItemClickListener {
         @Override
         public void onItemClick(String key) {
+            if (key == null) return;
             //noinspection SwitchStatementWithTooFewBranches
             switch (key) {
                 case "clear_cache":
