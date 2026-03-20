@@ -292,6 +292,9 @@ public class LibraryActivity extends AppCompatActivity {
                     childUri = DocumentsContract.buildChildDocumentsUriUsingTree(currentTreeUri, DocumentsContract.getDocumentId(subtreeUris.peek()));
                 }
 
+                // to add files after folders
+                ArrayList<LibraryItem> files = new ArrayList<>();
+
                 try (var cursor = getContentResolver().query(childUri, new String[] {
                         DocumentsContract.Document.COLUMN_DOCUMENT_ID,
                         DocumentsContract.Document.COLUMN_DISPLAY_NAME,
@@ -330,11 +333,13 @@ public class LibraryActivity extends AppCompatActivity {
                                 var mm = mmCache.getMediaMetadata(LibraryActivity.this, name, fileUri, size, lastModified);
                                 var li = LibraryItem.asFolderMusic(null, mm.title, name, fileUri.toString());
                                 if (selectedFiles.contains(fileUri)) li.selected = true;
-                                displayList.add(li);
+                                files.add(li);
                             }
                         }
                     }
                 }
+
+                if (!files.isEmpty()) displayList.addAll(files);
 
                 runOnUiThread(() -> {
                     binding.rvLibraryList.setVisibility(View.VISIBLE);
