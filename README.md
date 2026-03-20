@@ -26,7 +26,7 @@ I like this kind of design.
 
 The flagship idea of Uranus is the *File-based Playlist System*, where you build your own *playlists* by picking up *files*, instead of just browsing Android's pre-scanned system media library.
 
-I hated that media library thing a decade ago. Turns out I still hate it.
+This idea aims to provide a more PC-like experience rather than the mobile one, which I personally prefer.
 
 ![More Features](images/sc_feats.png)
 
