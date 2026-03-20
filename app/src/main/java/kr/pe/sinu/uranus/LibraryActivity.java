@@ -174,13 +174,13 @@ public class LibraryActivity extends AppCompatActivity {
                     finish();
                     return;
                 }
+                folderNames.pop();
                 if (subtreeUris.empty()) {
                     // can't go up, go back to root menu
                     currentTreeUri = null;
                     refreshDisplayList();
                 } else {
                     // can go up
-                    folderNames.pop();
                     currentTreeUri = subtreeUris.pop();
                     refreshDisplayList();
                 }
