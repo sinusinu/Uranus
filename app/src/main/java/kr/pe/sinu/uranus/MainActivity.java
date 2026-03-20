@@ -164,16 +164,7 @@ public class MainActivity extends AppCompatActivity {
                         pendingJumpPosIndex = jumpPosIndex;
                     }
                     if (newPlaylist.isEmpty()) {
-                        binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
-                        if (currentCover != null && !currentCover.isRecycled()) {
-                            currentCover.recycle();
-                        }
-                        binding.tvMainTitle.setText(R.string.main_placeholder_title);
-                        binding.tvMainSubtitle.setText(R.string.main_placeholder_subtitle);
-                        binding.tvMainTimeCurrent.setText(R.string.main_placeholder_time);
-                        binding.tvMainTimeTotal.setText(R.string.main_placeholder_time);
-                        binding.sbMainSeekbar.setProgress(0);
-                        binding.sbMainSeekbar.setMax(1);
+                        resetDisplay();
                     }
                 }
             }
@@ -561,6 +552,19 @@ public class MainActivity extends AppCompatActivity {
         } else {
             mwBinding.tvMoreTimerValue.setText(R.string.main_more_timer_desc_off);
         }
+    }
+
+    private void resetDisplay() {
+        binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
+        if (currentCover != null && !currentCover.isRecycled()) {
+            currentCover.recycle();
+        }
+        binding.tvMainTitle.setText(R.string.main_placeholder_title);
+        binding.tvMainSubtitle.setText(R.string.main_placeholder_subtitle);
+        binding.tvMainTimeCurrent.setText(R.string.main_placeholder_time);
+        binding.tvMainTimeTotal.setText(R.string.main_placeholder_time);
+        binding.sbMainSeekbar.setProgress(0);
+        binding.sbMainSeekbar.setMax(1);
     }
 
     @Override
