@@ -10,18 +10,25 @@ Uranus is currently in an early stage of development: barely works, lots of prob
 
 No support will be provided until the project reaches some stable point.
 
-# Screenshots
+# What's *opinionated* about it?
 
-![Screenshots](images/screenshot_alpha.png)
+![Main Screen](images/sc_main.png)
 
-<sup>Note: Screenshot from an early build; things are subject to change.</sup>
+I like this kind of design.
 
-# To-dos
+![File-based Playlist System](images/sc_playlist.png)
 
-- [x] File-based Playlist system
-- [ ] YT-style double-tap to seek
-- [ ] Volume multiplier
-- [ ] Sleep timer
+Uranus is a revival of one of my projects from almost a decade ago. It's the same idea, with more "modern" execution.
+
+The idea is the *File-based Playlist System*, where you build your own *playlists* by picking up *files*, instead of just browsing Android's pre-scanned system media library.
+
+I hated that media library thing a decade ago. Turns out I still hate it.
+
+![More Features](images/sc_feats.png)
+
+And of course, it contains niche features (I like) too!
+
+<sup>Note: Screenshots from an alpha build; things are subject to change.</sup>
 
 # License
 
