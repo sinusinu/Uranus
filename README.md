@@ -18,9 +18,7 @@ I like this kind of design.
 
 ![File-based Playlist System](images/sc_playlist.png)
 
-Uranus is a revival of one of my projects from almost a decade ago. It's the same idea, with more "modern" execution.
-
-The idea is the *File-based Playlist System*, where you build your own *playlists* by picking up *files*, instead of just browsing Android's pre-scanned system media library.
+The flagship idea of Uranus is the *File-based Playlist System*, where you build your own *playlists* by picking up *files*, instead of just browsing Android's pre-scanned system media library.
 
 I hated that media library thing a decade ago. Turns out I still hate it.
 
