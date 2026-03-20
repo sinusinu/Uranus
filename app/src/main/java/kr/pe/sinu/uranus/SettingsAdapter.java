@@ -15,12 +15,14 @@ import kr.pe.sinu.uranus.databinding.ListSettingsItemBinding;
 public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHolder> {
     private final Context context;
     private final SharedPreferences sp;
+    private final OnItemClickListener onItemClickListener;
 
     private final SettingsItem[] items;
 
-    public SettingsAdapter(Context context, SharedPreferences sp) {
+    public SettingsAdapter(Context context, SharedPreferences sp, OnItemClickListener onItemClickListener) {
         this.context = context;
         this.sp = sp;
+        this.onItemClickListener = onItemClickListener;
 
         items = new SettingsItem[] {
                 new SettingsItem(
@@ -76,6 +78,9 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
                 holder.binding.cbSettingsItemCheck.setVisibility(View.GONE);
                 holder.binding.tvSettingsItemTitle.setText(items[position].title);
                 holder.binding.tvSettingsItemSubtitle.setText(items[position].desc);
+                holder.binding.llSettingsItemItem.setOnClickListener(v -> {
+                    if (onItemClickListener != null) onItemClickListener.onItemClick(items[position].key);
+                });
                 break;
             case SettingsItem.TYPE_CHECKBOX:
                 holder.binding.tvSettingsItemCategory.setVisibility(View.GONE);
@@ -83,6 +88,9 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
                 holder.binding.cbSettingsItemCheck.setVisibility(View.VISIBLE);
                 holder.binding.tvSettingsItemTitle.setText(items[position].title);
                 holder.binding.tvSettingsItemSubtitle.setText(items[position].desc);
+                holder.binding.llSettingsItemItem.setOnClickListener(v -> {
+                    if (onItemClickListener != null) onItemClickListener.onItemClick(items[position].key);
+                });
                 break;
             case SettingsItem.TYPE_CATEGORY:
                 holder.binding.tvSettingsItemCategory.setVisibility(View.VISIBLE);
@@ -95,5 +103,9 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
     @Override
     public int getItemCount() {
         return items.length;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(String key);
     }
 }

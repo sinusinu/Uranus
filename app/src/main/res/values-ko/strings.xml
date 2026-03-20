@@ -73,9 +73,11 @@
 
     <string name="settings_title">설정</string>
     <string name="settings_category_troubleshooting">문제 해결</string>
-    <string name="settings_item_clear_cache_title">캐시 정리</string>
-    <string name="settings_item_clear_cache_desc">태그 캐시를 초기화합니다.</string>
+    <string name="settings_item_clear_cache_title">태그 캐시 정리</string>
+    <string name="settings_item_clear_cache_desc">캐시된 태그 데이터를 모두 삭제합니다. 태그 데이터가 올바르게 표시되지 않을 경우 실행해보세요.</string>
     <string name="settings_category_about">정보</string>
+    <string name="settings_cache_cleared">태그 캐시를 초기화했습니다</string>
+    <string name="settings_error_cache_clear_failed">태그 캐시를 초기화하지 못했습니다</string>
 
     <string name="acc_cover">앨범 아트</string>
     <string name="acc_play">재생</string>

@@ -86,11 +86,13 @@
 
     <string name="settings_title">Settings</string>
     <string name="settings_category_troubleshooting">Troubleshooting</string>
-    <string name="settings_item_clear_cache_title">Clear Cache</string>
-    <string name="settings_item_clear_cache_desc">Clear the tag cache. Write a better description later.</string>
+    <string name="settings_item_clear_cache_title">Clear Tag Cache</string>
+    <string name="settings_item_clear_cache_desc">Clear all cached tag data. Try this if any tag data is not displayed correctly.</string>
     <string name="settings_category_about">About</string>
     <string name="settings_item_about_title" translatable="false">Uranus %s</string>
     <string name="settings_item_about_desc" translatable="false">© 2026 sinu</string>
+    <string name="settings_cache_cleared">Cache cleared</string>
+    <string name="settings_error_cache_clear_failed">Failed to clear cache</string>
 
     <string name="settings_item_category_placeholder" translatable="false">General</string>
     <string name="settings_item_title_placeholder" translatable="false">Some Option</string>
