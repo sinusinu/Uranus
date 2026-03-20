@@ -68,9 +68,19 @@ public class MediaMetadataCache {
                 var art = mmr.getEmbeddedPicture();
                 if (art != null) {
                     var artBitmapFull = BitmapFactory.decodeByteArray(art, 0, art.length);
-                    var artBitmap = Bitmap.createScaledBitmap(artBitmapFull, Math.min(512, artBitmapFull.getWidth()), Math.min(512, artBitmapFull.getHeight()), true);
-                    if (artBitmap != artBitmapFull) {
+                    var artOriginalWidth = artBitmapFull.getWidth();
+                    var artOriginalHeight = artBitmapFull.getHeight();
+                    Bitmap artBitmap;
+                    if (artOriginalWidth > 512) {
+                        var artScaledHeight = (int)(512f * (artOriginalHeight / (float)artOriginalWidth));
+                        artBitmap = Bitmap.createScaledBitmap(artBitmapFull, 512, artScaledHeight, true);
                         artBitmapFull.recycle();
+                    } else if (artOriginalHeight > 512) {
+                        var artScaledWidth = (int)(512f * (artOriginalWidth / (float)artOriginalHeight));
+                        artBitmap = Bitmap.createScaledBitmap(artBitmapFull, artScaledWidth, 512, true);
+                        artBitmapFull.recycle();
+                    } else {
+                        artBitmap = artBitmapFull;
                     }
                     artBitmapFull = null;
                     try (var fos = new FileOutputStream(artFile)) {
