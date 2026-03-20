@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
                     // user wants to play, start playing now
                     mps.play();
                 }
+                Toast.makeText(MainActivity.this, R.string.main_playlist_updated, Toast.LENGTH_SHORT).show();
             }
 
             updateRepeatMode();
@@ -156,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
                             // user wants to play, start playing now
                             mps.play();
                         }
+                        Toast.makeText(MainActivity.this, R.string.main_playlist_updated, Toast.LENGTH_SHORT).show();
                     } else {
                         pendingPlaylistUpdate = newPlaylist;
                         pendingPlaylistNameUpdate = newPlaylistName;
