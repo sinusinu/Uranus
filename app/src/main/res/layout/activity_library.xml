@@ -18,12 +18,16 @@
         android:text="@string/library_title"
         android:textStyle="bold" />
 
-    <TextView
+    <kr.pe.sinu.uranus.AlwaysFocusedTextView
         android:id="@+id/tv_library_subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:maxLines="1"
+        android:singleLine="true"
         android:text="@string/library_subtitle_root"
         android:textSize="12sp" />
 
