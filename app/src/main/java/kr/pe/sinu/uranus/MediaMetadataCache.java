@@ -204,7 +204,7 @@ public class MediaMetadataCache {
                 ret.put("artist", artist);
                 ret.put("album", album);
                 ret.put("size", size);
-                ret.put("cover", cover);
+                ret.put("cover", cover == null ? JSONObject.NULL : cover);
             } catch (JSONException e) {
                 return null;
             }
