@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
@@ -52,6 +53,9 @@ public class PlaylistActivity extends AppCompatActivity {
     PlaylistItemAdapter adapter;
     PlaylistItemClickListener onItemClickListener;
     PlaylistItemLongClickListener onItemLongClickListener;
+
+    boolean isLoading = false;
+    boolean shouldCancelLoading = false;
 
     String playlistName;
 
@@ -105,10 +109,12 @@ public class PlaylistActivity extends AppCompatActivity {
         });
 
         binding.ivPlaylistAdd.setOnClickListener(v -> {
+            if (isLoading) return;
             addResult.launch(new Intent(this, LibraryActivity.class));
             overridePendingTransition(R.anim.anim_slide_exit, R.anim.anim_fade_exit);
         });
         binding.ivPlaylistClear.setOnClickListener(v -> {
+            if (isLoading) return;
             var ab = new AlertDialog.Builder(this)
                     .setMessage(R.string.playlist_warning_clear_message)
                     .setPositiveButton(R.string.common_yes, (d, i) -> {
@@ -122,12 +128,14 @@ public class PlaylistActivity extends AppCompatActivity {
             ab.show();
         });
         binding.ivPlaylistLoad.setOnClickListener(v -> {
+            if (isLoading) return;
             var intent = new Intent(this, PlaylistListActivity.class);
             intent.putExtra(PlaylistListActivity.EXTRA_PLAYLIST_IS_NOT_EMPTY, !playlist.isEmpty());
             loadResult.launch(intent);
             overridePendingTransition(R.anim.anim_slide_exit, R.anim.anim_fade_exit);
         });
         binding.ivPlaylistSave.setOnClickListener(v -> {
+            if (isLoading) return;
             if (playlist.isEmpty()) {
                 Toast.makeText(this, R.string.playlist_warning_cannot_save_empty_playlist, Toast.LENGTH_SHORT).show();
                 return;
@@ -188,6 +196,7 @@ public class PlaylistActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
         });
         binding.ivPlaylistOk.setOnClickListener(v -> {
+            if (isLoading) return;
             Intent intent = new Intent();
             intent.putParcelableArrayListExtra(MainActivity.EXTRA_NEW_PLAYLIST, playlist);
             intent.putExtra(MainActivity.EXTRA_NEW_PLAYLIST_NAME, playlistName);
@@ -195,6 +204,7 @@ public class PlaylistActivity extends AppCompatActivity {
             finish();
         });
         binding.ivPlaylistCancel.setOnClickListener(v -> {
+            shouldCancelLoading = true;
             setResult(RESULT_CANCELED);
             finish();
         });
@@ -213,6 +223,15 @@ public class PlaylistActivity extends AppCompatActivity {
         }) {
             TooltipCompat.setTooltipText(v, v.getContentDescription());
         }
+
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (isLoading) shouldCancelLoading = true;
+                setResult(RESULT_CANCELED);
+                finish();
+            }
+        });
 
         playlistName = getIntent().getStringExtra(EXTRA_PLAYLIST_NAME);
         if (playlistName == null) playlistName = getString(R.string.common_default_playlist_name);
@@ -360,6 +379,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     private void setPlaylistFromUri(ArrayList<Uri> playlistUris, boolean append) {
+        isLoading = true;
         MediaMetadataCache mmc = MediaMetadataCache.getInstance();
         if (!append) playlist.clear();
         long[] sizes = new long[playlistUris.size()];
@@ -381,26 +401,32 @@ public class PlaylistActivity extends AppCompatActivity {
         for (int i = 0; i < playlistUris.size(); i++) {
             var uri = playlistUris.get(i);
             if (!mmc.isMediaMetadataCached(this, uri, sizes[i], lastModifiedTss[i])) {
+                if (shouldCancelLoading) return;
                 binding.rvPlaylistList.setVisibility(View.INVISIBLE);
                 binding.llPlaylistPbrContainer.setVisibility(View.VISIBLE);
                 break;
             }
         }
-        new Thread(() -> {
-            for (int i = 0; i < playlistUris.size(); i++) {
-                var uri = playlistUris.get(i);
-                String filename = Util.getFilenameFromUri(PlaylistActivity.this, uri);
-                var mm = mmc.getMediaMetadata(PlaylistActivity.this, filename, uri, sizes[i], lastModifiedTss[i]);
-                var pi = new PlaylistItem(uri.toString(), filename, mm.title, mm.artist, mm.album);
-                playlist.add(pi);
-            }
-            runOnUiThread(() -> {
-                binding.rvPlaylistList.setVisibility(View.VISIBLE);
-                binding.llPlaylistPbrContainer.setVisibility(View.GONE);
-                updateSubtitle();
-                adapter.notifyDataSetChanged();
-            });
-        }).start();
+        if (!shouldCancelLoading) {
+            new Thread(() -> {
+                for (int i = 0; i < playlistUris.size(); i++) {
+                    var uri = playlistUris.get(i);
+                    String filename = Util.getFilenameFromUri(PlaylistActivity.this, uri);
+                    var mm = mmc.getMediaMetadata(PlaylistActivity.this, filename, uri, sizes[i], lastModifiedTss[i]);
+                    var pi = new PlaylistItem(uri.toString(), filename, mm.title, mm.artist, mm.album);
+                    playlist.add(pi);
+                }
+                if (!shouldCancelLoading) {
+                    runOnUiThread(() -> {
+                        binding.rvPlaylistList.setVisibility(View.VISIBLE);
+                        binding.llPlaylistPbrContainer.setVisibility(View.GONE);
+                        updateSubtitle();
+                        adapter.notifyDataSetChanged();
+                        isLoading = false;
+                    });
+                }
+            }).start();
+        }
     }
 
     private void moveSelectionUp() {
