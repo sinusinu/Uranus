@@ -13,6 +13,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -37,6 +38,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.media3.common.Player;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import kr.pe.sinu.uranus.databinding.ActivityMainBinding;
@@ -435,7 +438,41 @@ public class MainActivity extends AppCompatActivity {
                 currentCover = BitmapFactory.decodeFile(f.getAbsolutePath());
                 binding.ivMainCover.setImageBitmap(currentCover);
             } else {
-                binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
+                // file was there but gone? try caching again
+                try (var mmr = new MediaMetadataRetriever()) {
+                    mmr.setDataSource(this, currentMeta.uri);
+                    var art = mmr.getEmbeddedPicture();
+                    if (art != null) {
+                        var artBitmapFull = BitmapFactory.decodeByteArray(art, 0, art.length);
+                        var artOriginalWidth = artBitmapFull.getWidth();
+                        var artOriginalHeight = artBitmapFull.getHeight();
+                        Bitmap artBitmap;
+                        if (artOriginalWidth > 512) {
+                            var artScaledHeight = (int) (512f * (artOriginalHeight / (float) artOriginalWidth));
+                            artBitmap = Bitmap.createScaledBitmap(artBitmapFull, 512, artScaledHeight, true);
+                            artBitmapFull.recycle();
+                        } else if (artOriginalHeight > 512) {
+                            var artScaledWidth = (int) (512f * (artOriginalWidth / (float) artOriginalHeight));
+                            artBitmap = Bitmap.createScaledBitmap(artBitmapFull, artScaledWidth, 512, true);
+                            artBitmapFull.recycle();
+                        } else {
+                            artBitmap = artBitmapFull;
+                        }
+                        artBitmapFull = null;
+                        try (var fos = new FileOutputStream(f)) {
+                            artBitmap.compress(Bitmap.CompressFormat.WEBP, 85, fos);
+                        }
+                        currentCover = artBitmap;
+                        binding.ivMainCover.setImageBitmap(currentCover);
+                    } else {
+                        // cache says there was a cover but cover file is gone and now there is no cover????
+                        binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
+                    }
+                } catch (IOException e) {
+                    Log.w("Uranus", "Failed to parse embedded picture! (triggered from MainActivity)");
+                    Log.w("Uranus", e.toString());
+                    binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
+                }
             }
         } else {
             binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
