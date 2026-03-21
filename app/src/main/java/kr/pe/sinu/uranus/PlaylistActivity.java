@@ -231,9 +231,16 @@ public class PlaylistActivity extends AppCompatActivity {
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (isLoading) shouldCancelLoading = true;
-                setResult(RESULT_CANCELED);
-                finish();
+                if (!selected.isEmpty()) {
+                    // deselect all
+                    selected.clear();
+                    updateControlBar();
+                    adapter.notifyDataSetChanged();
+                } else {
+                    if (isLoading) shouldCancelLoading = true;
+                    setResult(RESULT_CANCELED);
+                    finish();
+                }
             }
         });
 
