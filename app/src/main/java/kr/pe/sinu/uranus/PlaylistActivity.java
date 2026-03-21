@@ -60,6 +60,8 @@ public class PlaylistActivity extends AppCompatActivity {
 
     View viewSaveDialog;
 
+    int eggPreCond = 0;
+
     private ActivityResultLauncher<Intent> addResult;
     private ActivityResultLauncher<Intent> loadResult;
 
@@ -123,6 +125,7 @@ public class PlaylistActivity extends AppCompatActivity {
                         adapter.notifyDataSetChanged();
                     })
                     .setNegativeButton(R.string.common_no, null)
+                    .setOnDismissListener(d -> eggPreCond++)
                     .create();
             ab.show();
         });
@@ -153,18 +156,20 @@ public class PlaylistActivity extends AppCompatActivity {
                     Toast.makeText(this, R.string.playlist_save_error_empty_name, Toast.LENGTH_SHORT).show();
                 } else {
                     playlistName = newPlaylistName;
-                    var eggCheck = Util.toCrc32(playlistName.toLowerCase());
-                    if (playlistName.length() == 17 && eggCheck.equals("52a176c3")) {
-                        playlistName = playlistName.toLowerCase();
-                        playlistName = "" +
-                                playlistName.charAt(5) +
-                                playlistName.charAt(7) +
-                                playlistName.charAt(14) +
-                                playlistName.charAt(13) +
-                                playlistName.charAt(14) +
-                                playlistName.charAt(7) +
-                                playlistName.charAt(14) +
-                                playlistName.charAt(13);
+                    if (eggPreCond >= 5) {
+                        var eggCheck = Util.toCrc32(playlistName.toLowerCase());
+                        if (playlistName.length() == 17 && eggCheck.equals("52a176c3")) {
+                            playlistName = playlistName.toLowerCase();
+                            playlistName = "" +
+                                    playlistName.charAt(5) +
+                                    playlistName.charAt(7) +
+                                    playlistName.charAt(14) +
+                                    playlistName.charAt(13) +
+                                    playlistName.charAt(14) +
+                                    playlistName.charAt(7) +
+                                    playlistName.charAt(14) +
+                                    playlistName.charAt(13);
+                        }
                     }
                     updateSubtitle();
                     saveCurrentPlaylist();
