@@ -337,6 +337,7 @@ public class LibraryActivity extends AppCompatActivity {
                             }
                         }
                     }
+                    mmCache.saveCacheAsync(LibraryActivity.this);
                 }
 
                 if (!files.isEmpty()) displayList.addAll(files);

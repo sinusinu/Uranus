@@ -101,7 +101,6 @@ public class MediaMetadataCache {
             synchronized (cache) {
                 cache.put(cacheId, mm);
             }
-            saveCacheAsync(context);
             return mm;
         } catch (Exception e) {
             Log.e("Uranus", "Failed to parse file! returning empty");
@@ -111,7 +110,6 @@ public class MediaMetadataCache {
             synchronized (cache) {
                 cache.put(cacheId, mm);
             }
-            saveCacheAsync(context);
             return mm;
         }
     }
@@ -159,7 +157,7 @@ public class MediaMetadataCache {
         }
     }
 
-    private void saveCacheAsync(Context context) {
+    public void saveCacheAsync(Context context) {
         final Context fContext = context;
         new Thread(() -> {
             boolean error = false;

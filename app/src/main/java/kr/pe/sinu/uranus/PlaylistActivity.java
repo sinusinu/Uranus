@@ -427,6 +427,7 @@ public class PlaylistActivity extends AppCompatActivity {
                     var pi = new PlaylistItem(uri.toString(), filename, mm.title, mm.artist, mm.album);
                     playlist.add(pi);
                 }
+                mmc.saveCacheAsync(PlaylistActivity.this);
                 if (!shouldCancelLoading) {
                     runOnUiThread(() -> {
                         binding.rvPlaylistList.setVisibility(View.VISIBLE);
