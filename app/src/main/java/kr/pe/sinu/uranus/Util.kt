@@ -7,6 +7,7 @@ import android.content.Context
 import android.net.Uri
 import android.provider.DocumentsContract
 import java.io.File
+import java.security.MessageDigest
 import java.util.Locale
 import java.util.zip.CRC32
 
@@ -78,6 +79,12 @@ class Util {
         fun toCrc32(input: String): String {
             val crc = CRC32().apply { update(input.toByteArray(Charsets.UTF_8)) }
             return "%08x".format(crc.value)
+        }
+
+        @JvmStatic
+        fun toMd5(bytes: ByteArray): String {
+            val digest = MessageDigest.getInstance("MD5")
+            return digest.digest(bytes).joinToString("") { "%02x".format(it) }
         }
     }
 }

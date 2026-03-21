@@ -429,8 +429,8 @@ public class MainActivity extends AppCompatActivity {
             binding.ivMainCover.setImageBitmap(null);
             currentCover.recycle();
         }
-        if (mm.hasCover) {
-            var f = new File(getCacheDir(), MediaMetadataCache.getCacheKey(currentMeta.uri, size, lastModified) + ".webp");
+        if (mm.cover != null) {
+            var f = new File(getCacheDir(), mm.cover);
             if (f.exists()) {
                 currentCover = BitmapFactory.decodeFile(f.getAbsolutePath());
                 binding.ivMainCover.setImageBitmap(currentCover);

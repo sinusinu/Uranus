@@ -62,36 +62,43 @@ public class MediaMetadataCache {
             if (artist == null) artist = "??unk";
             album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
             if (album == null) album = "??unk";
-            boolean hasCover = false;
-            var artFile = new File(context.getCacheDir(), getCacheKey(uri, size, lastModified) + ".webp");
-            if (!artFile.exists()) {
-                var art = mmr.getEmbeddedPicture();
-                if (art != null) {
-                    var artBitmapFull = BitmapFactory.decodeByteArray(art, 0, art.length);
-                    var artOriginalWidth = artBitmapFull.getWidth();
-                    var artOriginalHeight = artBitmapFull.getHeight();
-                    Bitmap artBitmap;
-                    if (artOriginalWidth > 512) {
-                        var artScaledHeight = (int)(512f * (artOriginalHeight / (float)artOriginalWidth));
-                        artBitmap = Bitmap.createScaledBitmap(artBitmapFull, 512, artScaledHeight, true);
-                        artBitmapFull.recycle();
-                    } else if (artOriginalHeight > 512) {
-                        var artScaledWidth = (int)(512f * (artOriginalWidth / (float)artOriginalHeight));
-                        artBitmap = Bitmap.createScaledBitmap(artBitmapFull, artScaledWidth, 512, true);
-                        artBitmapFull.recycle();
-                    } else {
-                        artBitmap = artBitmapFull;
+            String coverFilename = null;
+            var art = mmr.getEmbeddedPicture();
+            if (art != null) {
+                var artHash = Util.toMd5(art);
+                coverFilename = artHash + ".webp";
+                var artFile = new File(context.getCacheDir(), artHash + ".webp");
+                if (!artFile.exists()) {
+                    try {
+                        var artBitmapFull = BitmapFactory.decodeByteArray(art, 0, art.length);
+                        var artOriginalWidth = artBitmapFull.getWidth();
+                        var artOriginalHeight = artBitmapFull.getHeight();
+                        Bitmap artBitmap;
+                        if (artOriginalWidth > 512) {
+                            var artScaledHeight = (int) (512f * (artOriginalHeight / (float) artOriginalWidth));
+                            artBitmap = Bitmap.createScaledBitmap(artBitmapFull, 512, artScaledHeight, true);
+                            artBitmapFull.recycle();
+                        } else if (artOriginalHeight > 512) {
+                            var artScaledWidth = (int) (512f * (artOriginalWidth / (float) artOriginalHeight));
+                            artBitmap = Bitmap.createScaledBitmap(artBitmapFull, artScaledWidth, 512, true);
+                            artBitmapFull.recycle();
+                        } else {
+                            artBitmap = artBitmapFull;
+                        }
+                        artBitmapFull = null;
+                        try (var fos = new FileOutputStream(artFile)) {
+                            artBitmap.compress(Bitmap.CompressFormat.WEBP, 85, fos);
+                        }
+                        artBitmap.recycle();
+                        artBitmap = null;
+                    } catch (Exception e) {
+                        Log.w("Uranus", "Failed to parse embedded picture!");
+                        Log.w("Uranus", e.toString());
+                        coverFilename = null;
                     }
-                    artBitmapFull = null;
-                    try (var fos = new FileOutputStream(artFile)) {
-                        artBitmap.compress(Bitmap.CompressFormat.WEBP, 85, fos);
-                    }
-                    hasCover = true;
-                    artBitmap.recycle();
-                    artBitmap = null;
                 }
             }
-            CacheableMediaMetadata mm = new CacheableMediaMetadata(title, artist, album, size, hasCover);
+            CacheableMediaMetadata mm = new CacheableMediaMetadata(title, artist, album, size, coverFilename);
             synchronized (cache) {
                 cache.put(cacheId, mm);
             }
@@ -101,7 +108,7 @@ public class MediaMetadataCache {
             Log.e("Uranus", "Failed to parse file! returning empty");
             //noinspection CallToPrintStackTrace
             e.printStackTrace();
-            CacheableMediaMetadata mm = new CacheableMediaMetadata(filename, "??unk", "??unk", 0, false);
+            CacheableMediaMetadata mm = new CacheableMediaMetadata(filename, "??unk", "??unk", 0, null);
             synchronized (cache) {
                 cache.put(cacheId, mm);
             }
@@ -141,7 +148,7 @@ public class MediaMetadataCache {
                                     ko.getString("artist"),
                                     ko.getString("album"),
                                     ko.getLong("size"),
-                                    ko.getBoolean("has_cover")
+                                    ko.getString("cover")
                             );
                             cache.put(k, cmm);
                         }
@@ -180,14 +187,15 @@ public class MediaMetadataCache {
         String artist;
         String album;
         long size;
-        boolean hasCover;
+        @Deprecated boolean hasCover = false;
+        String cover;
 
-        public CacheableMediaMetadata(String title, String artist, String album, long size, boolean hasCover) {
+        public CacheableMediaMetadata(String title, String artist, String album, long size, String cover) {
             this.title = title;
             this.artist = artist;
             this.album = album;
             this.size = size;
-            this.hasCover = hasCover;
+            this.cover = cover;
         }
 
         public JSONObject toJSONObject() {
@@ -197,7 +205,7 @@ public class MediaMetadataCache {
                 ret.put("artist", artist);
                 ret.put("album", album);
                 ret.put("size", size);
-                ret.put("has_cover", hasCover);
+                ret.put("cover", cover);
             } catch (JSONException e) {
                 return null;
             }
