@@ -6,9 +6,10 @@ package kr.pe.sinu.uranus;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.util.Log;
+
+import com.kyant.taglib.TagLib;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +40,7 @@ public class MediaMetadataCache {
         return cache.containsKey(getCacheKey(uri, size, lastModified));
     }
 
-    public CacheableMediaMetadata getMediaMetadata(Context context, MediaMetadataRetriever mmr, String filename, Uri uri, long size, long lastModified) {
+    public CacheableMediaMetadata getMediaMetadata(Context context, String filename, Uri uri, long size, long lastModified) {
         loadCacheIfNot(context);
 
         String cacheId = getCacheKey(uri, size, lastModified);
@@ -52,66 +53,81 @@ public class MediaMetadataCache {
         String artist;
         String album;
 
-        // this is too slow...
         try {
-            mmr.setDataSource(context, uri);
-            title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-            if (title == null) title = Util.stripFileExt(filename);
-            artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-            if (artist == null) artist = "??unk";
-            album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-            if (album == null) album = "??unk";
-            String coverFilename = null;
-            var art = mmr.getEmbeddedPicture();
-            if (art != null) {
-                var artHash = Util.toMd5(art);
-                coverFilename = artHash + ".webp";
-                var artFile = new File(context.getCacheDir(), artHash + ".webp");
-                if (!artFile.exists()) {
-                    try {
-                        var artBitmapFull = BitmapFactory.decodeByteArray(art, 0, art.length);
-                        var artOriginalWidth = artBitmapFull.getWidth();
-                        var artOriginalHeight = artBitmapFull.getHeight();
-                        Bitmap artBitmap;
-                        if (artOriginalWidth > 512) {
-                            var artScaledHeight = (int) (512f * (artOriginalHeight / (float) artOriginalWidth));
-                            artBitmap = Bitmap.createScaledBitmap(artBitmapFull, 512, artScaledHeight, true);
-                            artBitmapFull.recycle();
-                        } else if (artOriginalHeight > 512) {
-                            var artScaledWidth = (int) (512f * (artOriginalWidth / (float) artOriginalHeight));
-                            artBitmap = Bitmap.createScaledBitmap(artBitmapFull, artScaledWidth, 512, true);
-                            artBitmapFull.recycle();
-                        } else {
-                            artBitmap = artBitmapFull;
+            var fdo = context.getContentResolver().openFileDescriptor(uri, "r");
+            if (fdo != null) {
+                CacheableMediaMetadata mm = null;
+                var fd = fdo.dup().detachFd();
+                var md = TagLib.getMetadata(fd, true);
+                fdo.close();
+                if (md != null) {
+                    var pm = md.getPropertyMap();
+                    var titles = pm.get("TITLE");
+                    if (titles == null || titles.length == 0) title = Util.stripFileExt(filename);
+                    else title = titles[0];
+                    var artists = pm.get("ARTIST");
+                    if (artists == null || artists.length == 0) artist = "??unk";
+                    else artist = artists[0];
+                    var albums = pm.get("ALBUM");
+                    if (albums == null || albums.length == 0) album = "??unk";
+                    else album = albums[0];
+                    String coverFilename = null;
+                    var arts = md.getPictures();
+                    if (arts != null && arts.length != 0) {
+                        var art = arts[0].getData();
+                        if (art != null) {
+                            var artHash = Util.toMd5(art);
+                            coverFilename = artHash + ".webp";
+                            var artFile = new File(context.getCacheDir(), artHash + ".webp");
+                            if (!artFile.exists()) {
+                                try {
+                                    var artBitmapFull = BitmapFactory.decodeByteArray(art, 0, art.length);
+                                    var artOriginalWidth = artBitmapFull.getWidth();
+                                    var artOriginalHeight = artBitmapFull.getHeight();
+                                    Bitmap artBitmap;
+                                    if (artOriginalWidth > 512) {
+                                        var artScaledHeight = (int) (512f * (artOriginalHeight / (float) artOriginalWidth));
+                                        artBitmap = Bitmap.createScaledBitmap(artBitmapFull, 512, artScaledHeight, true);
+                                        artBitmapFull.recycle();
+                                    } else if (artOriginalHeight > 512) {
+                                        var artScaledWidth = (int) (512f * (artOriginalWidth / (float) artOriginalHeight));
+                                        artBitmap = Bitmap.createScaledBitmap(artBitmapFull, artScaledWidth, 512, true);
+                                        artBitmapFull.recycle();
+                                    } else {
+                                        artBitmap = artBitmapFull;
+                                    }
+                                    artBitmapFull = null;
+                                    try (var fos = new FileOutputStream(artFile)) {
+                                        artBitmap.compress(Bitmap.CompressFormat.WEBP, 85, fos);
+                                    }
+                                    artBitmap.recycle();
+                                    artBitmap = null;
+                                } catch (Exception e) {
+                                    Log.w("Uranus", "Failed to parse embedded picture!");
+                                    Log.w("Uranus", e.toString());
+                                    coverFilename = null;
+                                }
+                            }
                         }
-                        artBitmapFull = null;
-                        try (var fos = new FileOutputStream(artFile)) {
-                            artBitmap.compress(Bitmap.CompressFormat.WEBP, 85, fos);
-                        }
-                        artBitmap.recycle();
-                        artBitmap = null;
-                    } catch (Exception e) {
-                        Log.w("Uranus", "Failed to parse embedded picture!");
-                        Log.w("Uranus", e.toString());
-                        coverFilename = null;
                     }
+                    mm = new CacheableMediaMetadata(title, artist, album, size, coverFilename);
+                }
+                if (mm != null) {
+                    synchronized (cache) {
+                        cache.put(cacheId, mm);
+                    }
+                    return mm;
                 }
             }
-            CacheableMediaMetadata mm = new CacheableMediaMetadata(title, artist, album, size, coverFilename);
-            synchronized (cache) {
-                cache.put(cacheId, mm);
-            }
-            return mm;
         } catch (Exception e) {
-            Log.e("Uranus", "Failed to parse file! returning empty");
-            //noinspection CallToPrintStackTrace
-            e.printStackTrace();
-            CacheableMediaMetadata mm = new CacheableMediaMetadata(filename, "??unk", "??unk", size, null);
-            synchronized (cache) {
-                cache.put(cacheId, mm);
-            }
-            return mm;
+            Log.e("Uranus", "Failed to parse file! will return empty metadata");
+            Log.e("Uranus", e.toString());
         }
+        CacheableMediaMetadata mm = new CacheableMediaMetadata(filename, "??unk", "??unk", size, null);
+        synchronized (cache) {
+            cache.put(cacheId, mm);
+        }
+        return mm;
     }
 
     public static String getCacheKey(Uri uri, long size, long lastModified) {

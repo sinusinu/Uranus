@@ -50,4 +50,5 @@ dependencies {
     implementation(libs.media3.ui)
     implementation(libs.recyclerview)
     implementation(libs.documentfile)
+    implementation("io.github.kyant0:taglib:1.0.5")
 }

@@ -6,7 +6,6 @@ package kr.pe.sinu.uranus;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
@@ -421,15 +420,13 @@ public class PlaylistActivity extends AppCompatActivity {
         }
         if (!shouldCancelLoading) {
             new Thread(() -> {
-                var mmr = new MediaMetadataRetriever();
                 for (int i = 0; i < playlistUris.size(); i++) {
                     var uri = playlistUris.get(i);
                     String filename = Util.getFilenameFromUri(PlaylistActivity.this, uri);
-                    var mm = mmc.getMediaMetadata(PlaylistActivity.this, mmr, filename, uri, sizes[i], lastModifiedTss[i]);
+                    var mm = mmc.getMediaMetadata(PlaylistActivity.this, filename, uri, sizes[i], lastModifiedTss[i]);
                     var pi = new PlaylistItem(uri.toString(), filename, mm.title, mm.artist, mm.album);
                     playlist.add(pi);
                 }
-                try { mmr.release(); } catch (Exception ignored) {}
                 mmc.saveCacheAsync(PlaylistActivity.this);
                 if (!shouldCancelLoading) {
                     runOnUiThread(() -> {

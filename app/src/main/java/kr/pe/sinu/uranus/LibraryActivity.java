@@ -5,7 +5,6 @@ package kr.pe.sinu.uranus;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
@@ -308,7 +307,6 @@ public class LibraryActivity extends AppCompatActivity {
                         return;
                     }
 
-                    var mmr = new MediaMetadataRetriever();
                     while (cursor.moveToNext()) {
                         String docId = cursor.getString(0);
                         String name = cursor.getString(1);
@@ -332,14 +330,13 @@ public class LibraryActivity extends AppCompatActivity {
                                         binding.llLibraryPbrContainer.setVisibility(View.VISIBLE);
                                     });
                                 }
-                                var mm = mmCache.getMediaMetadata(LibraryActivity.this, mmr, name, fileUri, size, lastModified);
+                                var mm = mmCache.getMediaMetadata(LibraryActivity.this, name, fileUri, size, lastModified);
                                 var li = LibraryItem.asFolderMusic(null, mm.title, name, fileUri.toString());
                                 if (selectedFiles.contains(fileUri)) li.selected = true;
                                 files.add(li);
                             }
                         }
                     }
-                    try { mmr.release(); } catch (Exception ignored) {}
                     mmCache.saveCacheAsync(LibraryActivity.this);
                 }
 
