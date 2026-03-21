@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class PlaylistItemAdapter extends RecyclerView.Adapter<PlaylistItemAdapter.ViewHolder> {
-    private ArrayList<PlaylistItem> list;
-    private HashSet<Integer> selected;
-    private OnItemClickListener onItemClickListener;
-    private OnItemLongClickListener onItemLongClickListener;
+    private final ArrayList<PlaylistItem> list;
+    private final HashSet<Integer> selected;
+    private final OnItemClickListener onItemClickListener;
+    private final OnItemLongClickListener onItemLongClickListener;
 
     public PlaylistItemAdapter(ArrayList<PlaylistItem> list, HashSet<Integer> selected, OnItemClickListener onItemClickListener, OnItemLongClickListener onItemLongClickListener) {
         this.list = list;

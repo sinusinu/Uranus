@@ -48,10 +48,9 @@ public class MediaMetadataCache {
             if (cache.containsKey(cacheId)) return cache.get(cacheId);
         }
 
-        String title = null;
-        String artist = null;
-        String album = null;
-        String coverPath = null;
+        String title;
+        String artist;
+        String album;
 
         // this is too slow...
         try (var mmr = new MediaMetadataRetriever()) {

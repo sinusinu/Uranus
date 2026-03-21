@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class LibraryItemAdapter extends RecyclerView.Adapter<LibraryItemAdapter.ViewHolder> {
-    private ArrayList<LibraryItem> list;
-    private OnItemClickListener onItemClickListener;
-    private OnItemRemoveClickListener onItemRemoveClickListener;
+    private final ArrayList<LibraryItem> list;
+    private final OnItemClickListener onItemClickListener;
+    private final OnItemRemoveClickListener onItemRemoveClickListener;
 
     public LibraryItemAdapter(ArrayList<LibraryItem> list, OnItemClickListener onItemClickListener, OnItemRemoveClickListener onItemRemoveClickListener) {
         this.list = list;

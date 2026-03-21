@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -64,7 +63,7 @@ public class PlaylistActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> addResult;
     private ActivityResultLauncher<Intent> loadResult;
 
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint({"NotifyDataSetChanged", "InflateParams"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -342,7 +341,7 @@ public class PlaylistActivity extends AppCompatActivity {
         boolean complete = true;
         for (String u : tp.uris) {
             var uri = Uri.parse(u);
-            boolean fileExists = false;
+            boolean fileExists;
             try (var c = cr.query(uri, null, null, null, null)) {
                 fileExists = (c != null) && (c.getCount() > 0);
             } catch (Exception ignored) {

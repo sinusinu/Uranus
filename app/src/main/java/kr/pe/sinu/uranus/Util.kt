@@ -66,13 +66,13 @@ class Util {
 
         @JvmStatic
         fun toTimestamp(seconds: Long): String {
-            if (seconds < 60) return $"0:${seconds.toString().padStart(2, '0')}"
+            if (seconds < 60) return "0:${seconds.toString().padStart(2, '0')}"
             val minutes = seconds / 60
             val modSeconds = seconds % 60
-            if (minutes < 60) return $"$minutes:${modSeconds.toString().padStart(2, '0')}"
+            if (minutes < 60) return "$minutes:${modSeconds.toString().padStart(2, '0')}"
             val hours = minutes / 60
             val modMinutes = minutes % 60
-            return $"$hours:${modMinutes.toString().padStart(2, '0')}:${modSeconds.toString().padStart(2, '0')}"
+            return "$hours:${modMinutes.toString().padStart(2, '0')}:${modSeconds.toString().padStart(2, '0')}"
         }
 
         @JvmStatic

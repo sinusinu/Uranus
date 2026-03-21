@@ -16,10 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class PlaylistListItemAdapter extends RecyclerView.Adapter<PlaylistListItemAdapter.ViewHolder> {
-    private Context context;
-    private ArrayList<PlaylistListItem> list;
-    private OnItemClickListener onItemClickListener;
-    private OnItemRemoveClickListener onItemRemoveClickListener;
+    private final Context context;
+    private final ArrayList<PlaylistListItem> list;
+    private final OnItemClickListener onItemClickListener;
+    private final OnItemRemoveClickListener onItemRemoveClickListener;
 
     public PlaylistListItemAdapter(Context context, ArrayList<PlaylistListItem> list, OnItemClickListener onItemClickListener, OnItemRemoveClickListener onItemRemoveClickListener) {
         this.context = context;

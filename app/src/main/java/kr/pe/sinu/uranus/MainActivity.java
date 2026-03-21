@@ -171,9 +171,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         settingsResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), (result) -> {
-            if (result.getData() != null) {
+            //if (result.getData() != null) {
                 // do something if command comes
-            }
+            //}
         });
 
         int mwWidthInPx = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 320, getResources().getDisplayMetrics());
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
             mwBinding.llMoreVolMul.setVisibility(View.VISIBLE);
             mwBinding.llMoreTimer.setVisibility(View.GONE);
 
-            int volMulValue = 100;
+            int volMulValue;
             if (bound) volMulValue = mps.getVolumeMultiplier();
             else volMulValue = sp.getInt("vol_mul", 100);
 
