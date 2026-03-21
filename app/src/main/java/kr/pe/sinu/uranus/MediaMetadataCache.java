@@ -39,7 +39,7 @@ public class MediaMetadataCache {
         return cache.containsKey(getCacheKey(uri, size, lastModified));
     }
 
-    public CacheableMediaMetadata getMediaMetadata(Context context, String filename, Uri uri, long size, long lastModified) {
+    public CacheableMediaMetadata getMediaMetadata(Context context, MediaMetadataRetriever mmr, String filename, Uri uri, long size, long lastModified) {
         loadCacheIfNot(context);
 
         String cacheId = getCacheKey(uri, size, lastModified);
@@ -53,7 +53,7 @@ public class MediaMetadataCache {
         String album;
 
         // this is too slow...
-        try (var mmr = new MediaMetadataRetriever()) {
+        try {
             mmr.setDataSource(context, uri);
             title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
             if (title == null) title = Util.stripFileExt(filename);

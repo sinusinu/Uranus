@@ -417,66 +417,73 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         var mmc = MediaMetadataCache.getInstance();
-        var mm = mmc.getMediaMetadata(MainActivity.this, filename, currentMeta.uri, size, lastModified);
-        String artist = mm.artist;
-        if (artist.equals("??unk")) artist = getString(R.string.main_unknown_artist);
-        String album = mm.album;
-        binding.tvMainTitle.setText(mm.title);
-        if (album.equals("??unk")) {
-            // do not display album title if album title is unknown
-            binding.tvMainSubtitle.setText(artist);
-        } else {
-            binding.tvMainSubtitle.setText(String.format(getString(R.string.main_subtitle_aa_format), artist, album));
-        }
-        if (currentCover != null && !currentCover.isRecycled()) {
-            binding.ivMainCover.setImageBitmap(null);
-            currentCover.recycle();
-        }
-        if (mm.cover != null) {
-            var f = new File(getCacheDir(), mm.cover);
-            if (f.exists()) {
-                currentCover = BitmapFactory.decodeFile(f.getAbsolutePath());
-                binding.ivMainCover.setImageBitmap(currentCover);
+        var mmr = new MediaMetadataRetriever();
+        try {
+            var mm = mmc.getMediaMetadata(MainActivity.this, mmr, filename, currentMeta.uri, size, lastModified);
+            String artist = mm.artist;
+            if (artist.equals("??unk")) artist = getString(R.string.main_unknown_artist);
+            String album = mm.album;
+            binding.tvMainTitle.setText(mm.title);
+            if (album.equals("??unk")) {
+                // do not display album title if album title is unknown
+                binding.tvMainSubtitle.setText(artist);
             } else {
-                // file was there but gone? try caching again
-                try (var mmr = new MediaMetadataRetriever()) {
-                    mmr.setDataSource(this, currentMeta.uri);
-                    var art = mmr.getEmbeddedPicture();
-                    if (art != null) {
-                        var artBitmapFull = BitmapFactory.decodeByteArray(art, 0, art.length);
-                        var artOriginalWidth = artBitmapFull.getWidth();
-                        var artOriginalHeight = artBitmapFull.getHeight();
-                        Bitmap artBitmap;
-                        if (artOriginalWidth > 512) {
-                            var artScaledHeight = (int) (512f * (artOriginalHeight / (float) artOriginalWidth));
-                            artBitmap = Bitmap.createScaledBitmap(artBitmapFull, 512, artScaledHeight, true);
-                            artBitmapFull.recycle();
-                        } else if (artOriginalHeight > 512) {
-                            var artScaledWidth = (int) (512f * (artOriginalWidth / (float) artOriginalHeight));
-                            artBitmap = Bitmap.createScaledBitmap(artBitmapFull, artScaledWidth, 512, true);
-                            artBitmapFull.recycle();
+                binding.tvMainSubtitle.setText(String.format(getString(R.string.main_subtitle_aa_format), artist, album));
+            }
+            if (currentCover != null && !currentCover.isRecycled()) {
+                binding.ivMainCover.setImageBitmap(null);
+                currentCover.recycle();
+            }
+            if (mm.cover != null) {
+                var f = new File(getCacheDir(), mm.cover);
+                if (f.exists()) {
+                    currentCover = BitmapFactory.decodeFile(f.getAbsolutePath());
+                    binding.ivMainCover.setImageBitmap(currentCover);
+                } else {
+                    // file was there but gone? try caching again
+                    try {
+                        mmr.setDataSource(this, currentMeta.uri);
+                        var art = mmr.getEmbeddedPicture();
+                        if (art != null) {
+                            var artBitmapFull = BitmapFactory.decodeByteArray(art, 0, art.length);
+                            var artOriginalWidth = artBitmapFull.getWidth();
+                            var artOriginalHeight = artBitmapFull.getHeight();
+                            Bitmap artBitmap;
+                            if (artOriginalWidth > 512) {
+                                var artScaledHeight = (int) (512f * (artOriginalHeight / (float) artOriginalWidth));
+                                artBitmap = Bitmap.createScaledBitmap(artBitmapFull, 512, artScaledHeight, true);
+                                artBitmapFull.recycle();
+                            } else if (artOriginalHeight > 512) {
+                                var artScaledWidth = (int) (512f * (artOriginalWidth / (float) artOriginalHeight));
+                                artBitmap = Bitmap.createScaledBitmap(artBitmapFull, artScaledWidth, 512, true);
+                                artBitmapFull.recycle();
+                            } else {
+                                artBitmap = artBitmapFull;
+                            }
+                            artBitmapFull = null;
+                            try (var fos = new FileOutputStream(f)) {
+                                artBitmap.compress(Bitmap.CompressFormat.WEBP, 85, fos);
+                            }
+                            currentCover = artBitmap;
+                            binding.ivMainCover.setImageBitmap(currentCover);
                         } else {
-                            artBitmap = artBitmapFull;
+                            // cache says there was a cover but cover file is gone and now there is no cover????
+                            binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
                         }
-                        artBitmapFull = null;
-                        try (var fos = new FileOutputStream(f)) {
-                            artBitmap.compress(Bitmap.CompressFormat.WEBP, 85, fos);
-                        }
-                        currentCover = artBitmap;
-                        binding.ivMainCover.setImageBitmap(currentCover);
-                    } else {
-                        // cache says there was a cover but cover file is gone and now there is no cover????
+                    } catch (IOException e) {
+                        Log.w("Uranus", "Failed to parse embedded picture! (triggered from MainActivity)");
+                        Log.w("Uranus", e.toString());
                         binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
                     }
-                } catch (IOException e) {
-                    Log.w("Uranus", "Failed to parse embedded picture! (triggered from MainActivity)");
-                    Log.w("Uranus", e.toString());
-                    binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
                 }
+            } else {
+                binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
             }
-        } else {
-            binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
+        } catch (Exception e) {
+            Log.w("Uranus", "Failed to parse media metadata!");
+            Log.w("Uranus", e.toString());
         }
+        try { mmr.release(); } catch (IOException ignored) {}
     }
 
     private void updateRepeatMode() {
