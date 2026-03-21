@@ -106,7 +106,7 @@ public class MediaMetadataCache {
             Log.e("Uranus", "Failed to parse file! returning empty");
             //noinspection CallToPrintStackTrace
             e.printStackTrace();
-            CacheableMediaMetadata mm = new CacheableMediaMetadata(filename, "??unk", "??unk", 0, null);
+            CacheableMediaMetadata mm = new CacheableMediaMetadata(filename, "??unk", "??unk", size, null);
             synchronized (cache) {
                 cache.put(cacheId, mm);
             }
