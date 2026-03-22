@@ -277,7 +277,7 @@ public class MediaPlaybackService extends Service {
     public void emergencyEscape() { stopSelf(); }
 
     public MpsMeta getMpsCurrentMeta() {
-        if (player.getPlaybackState() != Player.STATE_READY) return null;
+        if (player.getPlaybackState() != Player.STATE_READY && player.getPlaybackState() != Player.STATE_BUFFERING) return null;
         var currentPlayingIndex = getCurrentPlayingIndex();
         var nowPlayingMetadata = player.getMediaMetadata();
         String title = (nowPlayingMetadata.title != null ? nowPlayingMetadata.title.toString() : Util.stripFileExt(playlist.get(currentPlayingIndex).filename));
