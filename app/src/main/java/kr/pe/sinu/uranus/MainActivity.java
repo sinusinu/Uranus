@@ -343,7 +343,8 @@ public class MainActivity extends AppCompatActivity {
             public boolean onDoubleTap(@NonNull MotionEvent e) {
                 if (bound && mps.isPlaying()) {
                     var currentPos = mps.getCurrentPosition();
-                    var newPos = (int)(Math.clamp(currentPos - (doubleTapSeekIntervalSec * 1000), 0, mps.getDuration()));
+                    var duration = mps.getDuration(); if (duration == C.TIME_UNSET) duration = Long.MAX_VALUE;
+                    var newPos = (int)(Math.clamp(currentPos - (doubleTapSeekIntervalSec * 1000), 0, duration));
                     mps.seekTo(newPos);
 
                     binding.tvMainScrub.setText(String.format(getString(R.string.main_placeholder_scrub_seek_backwards), doubleTapSeekIntervalSec));
@@ -372,7 +373,8 @@ public class MainActivity extends AppCompatActivity {
             public boolean onDoubleTap(@NonNull MotionEvent e) {
                 if (bound && mps.isPlaying()) {
                     var currentPos = mps.getCurrentPosition();
-                    var newPos = (int)(Math.clamp(currentPos + (doubleTapSeekIntervalSec * 1000), 0, mps.getDuration()));
+                    var duration = mps.getDuration(); if (duration == C.TIME_UNSET) duration = Long.MAX_VALUE;
+                    var newPos = (int)(Math.clamp(currentPos + (doubleTapSeekIntervalSec * 1000), 0, duration));
                     mps.seekTo(newPos);
 
                     binding.tvMainScrub.setText(String.format(getString(R.string.main_placeholder_scrub_seek_forwards), doubleTapSeekIntervalSec));
