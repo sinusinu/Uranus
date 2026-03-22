@@ -49,6 +49,15 @@ public class MediaPlaybackService extends Service {
     public static final int REPEAT_MODE_REPEAT_ONE = 2;
     public static final int REPEAT_MODE_SHUFFLE = 3;
 
+    public static final int PLAYBACK_SPEED_0P25X = -3;
+    public static final int PLAYBACK_SPEED_0P50X = -2;
+    public static final int PLAYBACK_SPEED_0P75X = -1;
+    public static final int PLAYBACK_SPEED_1X    =  0;
+    public static final int PLAYBACK_SPEED_1P25X =  1;
+    public static final int PLAYBACK_SPEED_1P50X =  2;
+    public static final int PLAYBACK_SPEED_1P75X =  3;
+    public static final int PLAYBACK_SPEED_2X    =  4;
+
     public class LocalBinder extends Binder {
         public MediaPlaybackService getService() {
             return MediaPlaybackService.this;
@@ -66,6 +75,8 @@ public class MediaPlaybackService extends Service {
 
     private long sleepTimerTargetMinutes = 0;
     private BroadcastReceiver sleepTimeCheckReceiver;
+
+    private int playbackSpeed = PLAYBACK_SPEED_1X;
 
     private ArrayList<PlaylistItem> playlist;
     private String playlistName;
@@ -141,7 +152,7 @@ public class MediaPlaybackService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         eventListener = null;
-        if (sleepTimerTargetMinutes == 0 && playlist.isEmpty()) {
+        if (sleepTimerTargetMinutes == 0 && playbackSpeed == PLAYBACK_SPEED_1X && playlist.isEmpty()) {
             stopSelf();
         }
         return false;
@@ -271,6 +282,40 @@ public class MediaPlaybackService extends Service {
 
     public void setSleepTimerTargetMinutes(long timestamp) {
         sleepTimerTargetMinutes = timestamp;
+    }
+
+    public int getPlaybackSpeed() {
+        return playbackSpeed;
+    }
+
+    public void setPlaybackSpeed(int speed) {
+        playbackSpeed = Math.clamp(speed, PLAYBACK_SPEED_0P25X, PLAYBACK_SPEED_2X);
+        switch (playbackSpeed) {
+            case PLAYBACK_SPEED_0P25X:
+                player.setPlaybackSpeed(0.25f);
+                break;
+            case PLAYBACK_SPEED_0P50X:
+                player.setPlaybackSpeed(0.5f);
+                break;
+            case PLAYBACK_SPEED_0P75X:
+                player.setPlaybackSpeed(0.75f);
+                break;
+            case PLAYBACK_SPEED_1P25X:
+                player.setPlaybackSpeed(1.25f);
+                break;
+            case PLAYBACK_SPEED_1P50X:
+                player.setPlaybackSpeed(1.5f);
+                break;
+            case PLAYBACK_SPEED_1P75X:
+                player.setPlaybackSpeed(1.75f);
+                break;
+            case PLAYBACK_SPEED_2X:
+                player.setPlaybackSpeed(2f);
+                break;
+            default:
+                player.setPlaybackSpeed(1f);
+                break;
+        }
     }
 
     // TODO: remove this function on release

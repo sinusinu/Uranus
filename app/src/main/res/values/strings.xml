@@ -14,10 +14,10 @@
     <string name="main_playlist_updated">Playlist updated</string>
 
     <string name="main_more_vol_mul">Volume Multiplier</string>
-    <string name="main_more_timer">Sleep Timer</string>
     <string name="main_more_vol_mul_desc">This value will be multiplied to Uranus\'s audio volume, independent of system\'s. If unsure, keep it at 100%.</string>
     <string name="main_more_vol_mul_value">%d%%</string>
     <string name="main_more_vol_mul_value_placeholder">100%</string>
+    <string name="main_more_timer">Sleep Timer</string>
     <string name="main_more_timer_desc">If set, Uranus will stop playing music when the timer reaches zero.</string>
     <string name="main_more_timer_desc_off">Sleep Timer not set</string>
     <string name="main_more_timer_desc_on_template">About %s left</string>
@@ -29,6 +29,20 @@
     <string name="main_more_timer_add_60min">+1h</string>
     <string name="main_more_timer_cancel">Cancel</string>
     <string name="main_more_timer_error_too_long">Sleep Timer cannot exceed 24 hours!</string>
+    <string name="main_more_speed">Playback Speed</string>
+    <string name="main_more_speed_desc">Set the playback speed. This value won\'t be remembered and will be reset if the current session ends.</string>
+    <string name="main_more_speed_value">Current Speed: %s</string>
+    <string name="main_more_speed_increase">Faster</string>
+    <string name="main_more_speed_decrease">Slower</string>
+    <string name="main_more_speed_reset">Reset</string>
+    <string name="main_more_speed_0p25x">0.25x</string>
+    <string name="main_more_speed_0p50x">0.5x</string>
+    <string name="main_more_speed_0p75x">0.75x</string>
+    <string name="main_more_speed_1x">1x</string>
+    <string name="main_more_speed_1p25x">1.25x</string>
+    <string name="main_more_speed_1p50x">1.5x</string>
+    <string name="main_more_speed_1p75x">1.75x</string>
+    <string name="main_more_speed_2x">2x</string>
 
     <string name="playlist_title">Playlist</string>
     <string name="playlist_subtitle_placeholder">New Playlist, 0 songs</string>
@@ -132,6 +146,7 @@
     <string name="acc_move_down">Move Down</string>
     <string name="acc_vol_mul">Volume Multiplier</string>
     <string name="acc_timer">Sleep Timer</string>
+    <string name="acc_speed">Playback Speed</string>
 
     <string name="service_name">Media Playback Service</string>
     <string name="service_desc">Used for playing media on background.</string>

@@ -205,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
             mwBinding.tvMoreTitle.setText(R.string.main_more_vol_mul);
             mwBinding.llMoreVolMul.setVisibility(View.VISIBLE);
             mwBinding.llMoreTimer.setVisibility(View.GONE);
+            mwBinding.llMoreSpeed.setVisibility(View.GONE);
 
             int volMulValue;
             if (bound) volMulValue = mps.getVolumeMultiplier();
@@ -220,8 +221,20 @@ public class MainActivity extends AppCompatActivity {
             mwBinding.tvMoreTitle.setText(R.string.main_more_timer);
             mwBinding.llMoreVolMul.setVisibility(View.GONE);
             mwBinding.llMoreTimer.setVisibility(View.VISIBLE);
+            mwBinding.llMoreSpeed.setVisibility(View.GONE);
 
             updateSleepTimerText();
+
+            mwBinding.getRoot().post(this::adjustPopupPosition);
+        });
+        mwBinding.ivMoreSpeed.setOnClickListener(v -> {
+            mwBinding.tvMoreTitle.setVisibility(View.VISIBLE);
+            mwBinding.tvMoreTitle.setText(R.string.main_more_speed);
+            mwBinding.llMoreVolMul.setVisibility(View.GONE);
+            mwBinding.llMoreTimer.setVisibility(View.GONE);
+            mwBinding.llMoreSpeed.setVisibility(View.VISIBLE);
+
+            updateSpeedText();
 
             mwBinding.getRoot().post(this::adjustPopupPosition);
         });
@@ -263,6 +276,18 @@ public class MainActivity extends AppCompatActivity {
             if (bound) mps.setSleepTimerTargetMinutes(0);
             updateSleepTimerText();
         });
+        mwBinding.btnMoreSpeedDecrease.setOnClickListener(v -> {
+            if (bound) mps.setPlaybackSpeed(mps.getPlaybackSpeed() - 1);
+            updateSpeedText();
+        });
+        mwBinding.btnMoreSpeedReset.setOnClickListener(v -> {
+            if (bound) mps.setPlaybackSpeed(MediaPlaybackService.PLAYBACK_SPEED_1X);
+            updateSpeedText();
+        });
+        mwBinding.btnMoreSpeedIncrease.setOnClickListener(v -> {
+            if (bound) mps.setPlaybackSpeed(mps.getPlaybackSpeed() + 1);
+            updateSpeedText();
+        });
 
         binding.ivMainPlaylist.setOnClickListener(v -> {
             Intent intent = new Intent(this, PlaylistActivity.class);
@@ -302,6 +327,7 @@ public class MainActivity extends AppCompatActivity {
             mwBinding.tvMoreTitle.setVisibility(View.GONE);
             mwBinding.llMoreVolMul.setVisibility(View.GONE);
             mwBinding.llMoreTimer.setVisibility(View.GONE);
+            mwBinding.llMoreSpeed.setVisibility(View.GONE);
 
             mwBinding.getRoot().measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             int popupHeight = mwBinding.getRoot().getMeasuredHeight();
@@ -689,6 +715,22 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             mwBinding.tvMoreTimerValue.setText(R.string.main_more_timer_desc_off);
+        }
+    }
+
+    private void updateSpeedText() {
+        if (bound) {
+            int[] texts = {
+                    R.string.main_more_speed_0p25x,
+                    R.string.main_more_speed_0p50x,
+                    R.string.main_more_speed_0p75x,
+                    R.string.main_more_speed_1x,
+                    R.string.main_more_speed_1p25x,
+                    R.string.main_more_speed_1p50x,
+                    R.string.main_more_speed_1p75x,
+                    R.string.main_more_speed_2x,
+            };
+            mwBinding.tvMoreSpeedValue.setText(String.format(getString(R.string.main_more_speed_value), getString(texts[mps.getPlaybackSpeed() + 3])));
         }
     }
 
