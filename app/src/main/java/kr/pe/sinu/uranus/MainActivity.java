@@ -41,6 +41,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.media3.common.C;
 import androidx.media3.common.Player;
 
 import com.kyant.taglib.TagLib;
@@ -423,7 +424,8 @@ public class MainActivity extends AppCompatActivity {
         var mpsState = mps.getMpsState();
         if (mpsState != null) {
             if (!isSeeking) {
-                binding.tvMainTimeTotal.setText(Util.toTimestamp(mpsState.duration / 1000));
+                if (mpsState.duration == C.TIME_UNSET) binding.tvMainTimeTotal.setText(R.string.main_placeholder_time);
+                else binding.tvMainTimeTotal.setText(Util.toTimestamp(mpsState.duration / 1000));
                 binding.tvMainTimeCurrent.setText(Util.toTimestamp(mpsState.position / 1000));
                 binding.sbMainSeekbar.setMax((int) mpsState.duration);
                 binding.sbMainSeekbar.setProgress((int) mpsState.position);

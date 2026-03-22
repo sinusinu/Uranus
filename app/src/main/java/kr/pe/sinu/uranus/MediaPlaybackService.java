@@ -303,7 +303,7 @@ public class MediaPlaybackService extends Service {
     }
 
     public MpsState getMpsState() {
-        if (player.getPlaybackState() == Player.STATE_READY) {
+        if (player.getPlaybackState() == Player.STATE_READY || player.getPlaybackState() == Player.STATE_BUFFERING) {
             return new MpsState(
                     player.getDuration(),
                     player.getCurrentPosition(),
