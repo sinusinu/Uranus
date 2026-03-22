@@ -341,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
         final GestureDetector backwardSeekGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDoubleTap(@NonNull MotionEvent e) {
-                if (bound && mps.isPlaying()) {
+                if (bound && mps.getPlaybackState() == Player.STATE_READY) {
                     var currentPos = mps.getCurrentPosition();
                     var duration = mps.getDuration(); if (duration == C.TIME_UNSET) duration = Long.MAX_VALUE;
                     var newPos = (int)(Math.clamp(currentPos - (doubleTapSeekIntervalSec * 1000), 0, duration));
@@ -371,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
         final GestureDetector forwardSeekGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDoubleTap(@NonNull MotionEvent e) {
-                if (bound && mps.isPlaying()) {
+                if (bound && mps.getPlaybackState() == Player.STATE_READY) {
                     var currentPos = mps.getCurrentPosition();
                     var duration = mps.getDuration(); if (duration == C.TIME_UNSET) duration = Long.MAX_VALUE;
                     var newPos = (int)(Math.clamp(currentPos + (doubleTapSeekIntervalSec * 1000), 0, duration));
