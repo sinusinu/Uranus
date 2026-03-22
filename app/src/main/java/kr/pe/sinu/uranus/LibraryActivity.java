@@ -265,6 +265,7 @@ public class LibraryActivity extends AppCompatActivity {
     @SuppressLint("NotifyDataSetChanged")
     private void refreshDisplayList() {
         displayList.clear();
+        adapter.notifyDataSetChanged();
         if (currentTreeUri == null) {
             for (var f : folders) {
                 displayList.add(LibraryItem.asRootFolder(f.name, f.uri.toString()));
@@ -272,7 +273,11 @@ public class LibraryActivity extends AppCompatActivity {
             displayList.add(LibraryItem.asRootAddFolder());
             adapter.notifyDataSetChanged();
             binding.tvLibrarySubtitle.setText(R.string.library_subtitle_root);
+            binding.rvLibraryList.scrollToPosition(0);
         } else {
+            binding.rvLibraryList.setVisibility(View.GONE);
+            binding.llLibraryPbrContainer.setVisibility(View.VISIBLE);
+
             displayList.add(LibraryItem.asFolderUp());
 
             var sb = new StringBuilder("/");
@@ -282,8 +287,6 @@ public class LibraryActivity extends AppCompatActivity {
             isLoading = true;
 
             new Thread(() -> {
-                boolean mmCacheMissed = false;
-
                 Uri childUri;
                 if (subtreeUris.empty()) {
                     Uri rootDocumentUri = DocumentsContract.buildDocumentUriUsingTree(currentTreeUri, DocumentsContract.getTreeDocumentId(currentTreeUri));
@@ -323,13 +326,6 @@ public class LibraryActivity extends AppCompatActivity {
                         } else {
                             if (ALLOWED_EXTENSIONS.contains(Util.getFileExt(name))) {
                                 Uri fileUri = DocumentsContract.buildDocumentUriUsingTree(currentTreeUri, docId);
-                                if (!mmCacheMissed && !mmCache.isMediaMetadataCached(LibraryActivity.this, fileUri, size, lastModified)) {
-                                    mmCacheMissed = true;
-                                    runOnUiThread(() -> {
-                                        binding.rvLibraryList.setVisibility(View.GONE);
-                                        binding.llLibraryPbrContainer.setVisibility(View.VISIBLE);
-                                    });
-                                }
                                 var mm = mmCache.getMediaMetadata(LibraryActivity.this, name, fileUri, size, lastModified);
                                 var li = LibraryItem.asFolderMusic(null, mm.title, name, fileUri.toString());
                                 if (selectedFiles.contains(fileUri)) li.selected = true;

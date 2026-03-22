@@ -392,7 +392,10 @@ public class PlaylistActivity extends AppCompatActivity {
     private void setPlaylistFromUri(ArrayList<Uri> playlistUris, boolean append) {
         isLoading = true;
         MediaMetadataCache mmc = MediaMetadataCache.getInstance();
-        if (!append) playlist.clear();
+        if (!append) {
+            playlist.clear();
+            adapter.notifyDataSetChanged();
+        }
         long[] sizes = new long[playlistUris.size()];
         long[] lastModifiedTss = new long[playlistUris.size()];
         for (int i = 0; i < playlistUris.size(); i++) {
@@ -409,15 +412,8 @@ public class PlaylistActivity extends AppCompatActivity {
                 lastModifiedTss[i] = cursor.getLong(1);
             }
         }
-        for (int i = 0; i < playlistUris.size(); i++) {
-            var uri = playlistUris.get(i);
-            if (!mmc.isMediaMetadataCached(this, uri, sizes[i], lastModifiedTss[i])) {
-                if (shouldCancelLoading) return;
-                binding.rvPlaylistList.setVisibility(View.INVISIBLE);
-                binding.llPlaylistPbrContainer.setVisibility(View.VISIBLE);
-                break;
-            }
-        }
+        binding.rvPlaylistList.setVisibility(View.INVISIBLE);
+        binding.llPlaylistPbrContainer.setVisibility(View.VISIBLE);
         if (!shouldCancelLoading) {
             new Thread(() -> {
                 for (int i = 0; i < playlistUris.size(); i++) {
