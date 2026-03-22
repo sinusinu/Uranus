@@ -47,7 +47,13 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
                         String.format(context.getString(R.string.settings_item_about_title), BuildConfig.VERSION_NAME),
                         context.getString(R.string.settings_item_about_desc),
                         SettingsItem.TYPE_BUTTON,
-                        null
+                        "about"
+                ),
+                new SettingsItem(
+                        context.getString(R.string.settings_item_license_title),
+                        null,
+                        SettingsItem.TYPE_BUTTON,
+                        "license"
                 ),
         };
 
@@ -77,7 +83,12 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
                 holder.binding.llSettingsItemItem.setVisibility(View.VISIBLE);
                 holder.binding.cbSettingsItemCheck.setVisibility(View.GONE);
                 holder.binding.tvSettingsItemTitle.setText(items[position].title);
-                holder.binding.tvSettingsItemSubtitle.setText(items[position].desc);
+                if (items[position].desc == null) {
+                    holder.binding.tvSettingsItemSubtitle.setVisibility(View.GONE);
+                } else {
+                    holder.binding.tvSettingsItemSubtitle.setVisibility(View.VISIBLE);
+                    holder.binding.tvSettingsItemSubtitle.setText(items[position].desc);
+                }
                 holder.binding.llSettingsItemItem.setOnClickListener(v -> {
                     if (onItemClickListener != null) onItemClickListener.onItemClick(items[position].key);
                 });
@@ -87,7 +98,12 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
                 holder.binding.llSettingsItemItem.setVisibility(View.VISIBLE);
                 holder.binding.cbSettingsItemCheck.setVisibility(View.VISIBLE);
                 holder.binding.tvSettingsItemTitle.setText(items[position].title);
-                holder.binding.tvSettingsItemSubtitle.setText(items[position].desc);
+                if (items[position].desc == null) {
+                    holder.binding.tvSettingsItemSubtitle.setVisibility(View.GONE);
+                } else {
+                    holder.binding.tvSettingsItemSubtitle.setVisibility(View.VISIBLE);
+                    holder.binding.tvSettingsItemSubtitle.setText(items[position].desc);
+                }
                 holder.binding.llSettingsItemItem.setOnClickListener(v -> {
                     if (onItemClickListener != null) onItemClickListener.onItemClick(items[position].key);
                 });

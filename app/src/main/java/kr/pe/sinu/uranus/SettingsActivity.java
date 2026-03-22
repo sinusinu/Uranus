@@ -1,6 +1,8 @@
 package kr.pe.sinu.uranus;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -10,6 +12,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity;
 
 import java.io.File;
 
@@ -82,6 +86,17 @@ public class SettingsActivity extends AppCompatActivity {
                     } catch (Exception ignored) { error = true; }
                     if (error) Toast.makeText(SettingsActivity.this, R.string.settings_error_cache_clear_failed, Toast.LENGTH_SHORT).show();
                     else Toast.makeText(SettingsActivity.this, R.string.settings_cache_cleared, Toast.LENGTH_SHORT).show();
+                    break;
+                case "about":
+                    var intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sinusinu/Uranus"));
+                    try {
+                        startActivity(intent);
+                    } catch (Exception ignored) {
+
+                    }
+                    break;
+                case "license":
+                    startActivity(new Intent(SettingsActivity.this, OssLicensesMenuActivity.class));
                     break;
             }
         }
