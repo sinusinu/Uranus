@@ -381,6 +381,10 @@ public class MediaPlaybackService extends Service {
     private Notification buildNotification() {
         createNotificationChannel();
 
+        Intent openActivityIntent = new Intent(this, MainActivity.class);
+        openActivityIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent openActivityPendingIntent = PendingIntent.getActivity(this, 0, openActivityIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
         Intent dismissIntent = new Intent(ACTION_NOTIFICATION_DISMISSED);
         dismissIntent.setPackage(getPackageName()); // required for implicit intents on newer APIs
 
@@ -388,6 +392,7 @@ public class MediaPlaybackService extends Service {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.mipmap.ic_launcher_foreground)
                 .setStyle(new MediaStyleNotificationHelper.MediaStyle(mediaSession))
+                .setContentIntent(openActivityPendingIntent)
                 .setDeleteIntent(PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_IMMUTABLE))
                 .setOngoing(false)
                 .build();
@@ -395,6 +400,10 @@ public class MediaPlaybackService extends Service {
 
     @OptIn(markerClass = UnstableApi.class)
     private void updateNotification() {
+        Intent openActivityIntent = new Intent(this, MainActivity.class);
+        openActivityIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent openActivityPendingIntent = PendingIntent.getActivity(this, 0, openActivityIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
         Intent dismissIntent = new Intent(ACTION_NOTIFICATION_DISMISSED);
         dismissIntent.setPackage(getPackageName()); // required for implicit intents on newer APIs
 
@@ -402,6 +411,7 @@ public class MediaPlaybackService extends Service {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.mipmap.ic_launcher_foreground)
                 .setStyle(new MediaStyleNotificationHelper.MediaStyle(mediaSession))
+                .setContentIntent(openActivityPendingIntent)
                 .setDeleteIntent(PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_IMMUTABLE))
                 .setOngoing(false);
 
