@@ -43,6 +43,7 @@
     <string name="playlist_save_saved">\'%s\' 재생목록을 저장했어요!</string>
     <string name="playlist_save_hint">재생목록 이름</string>
     <string name="playlist_save_error_empty_name">재생목록 이름은 비워둘 수 없어요!</string>
+    <string name="playlist_warning_discard_changes">변경을 취소할까요?</string>
 
     <string name="playlist_list_title">저장된 재생목록 불러오기</string>
     <string name="playlist_list_subtitle_placeholder">재생목록 0개</string>

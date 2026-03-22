@@ -45,6 +45,7 @@
     <string name="playlist_save_saved">Playlist saved as \'%s\'.</string>
     <string name="playlist_save_hint">Playlist Name</string>
     <string name="playlist_save_error_empty_name">Name cannot be empty!</string>
+    <string name="playlist_warning_discard_changes">Discard changes?</string>
 
     <string name="playlist_item_title_placeholder" translatable="false">Sample Song Title</string>
     <string name="playlist_item_subtitle_placeholder" translatable="false">sample_song.mp3</string>

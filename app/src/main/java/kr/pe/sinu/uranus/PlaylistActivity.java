@@ -56,6 +56,8 @@ public class PlaylistActivity extends AppCompatActivity {
     boolean isLoading = false;
     boolean shouldCancelLoading = false;
 
+    boolean somethingChanged = false;
+
     String playlistName;
 
     View viewSaveDialog;
@@ -123,6 +125,7 @@ public class PlaylistActivity extends AppCompatActivity {
                         playlistName = getString(R.string.common_default_playlist_name);
                         updateSubtitle();
                         adapter.notifyDataSetChanged();
+                        somethingChanged = true;
                     })
                     .setNegativeButton(R.string.common_no, null)
                     .setOnDismissListener(d -> eggPreCond++)
@@ -185,6 +188,7 @@ public class PlaylistActivity extends AppCompatActivity {
             updateSubtitle();
             updateControlBar();
             adapter.notifyDataSetChanged();
+            somethingChanged = true;
         });
         binding.ivPlaylistSelDeselectAll.setOnClickListener(v -> {
             selected.clear();
@@ -194,10 +198,12 @@ public class PlaylistActivity extends AppCompatActivity {
         binding.ivPlaylistSelMoveUp.setOnClickListener(v -> {
             moveSelectionUp();
             adapter.notifyDataSetChanged();
+            somethingChanged = true;
         });
         binding.ivPlaylistSelMoveDown.setOnClickListener(v -> {
             moveSelectionDown();
             adapter.notifyDataSetChanged();
+            somethingChanged = true;
         });
         binding.ivPlaylistOk.setOnClickListener(v -> {
             if (isLoading) return;
@@ -208,9 +214,7 @@ public class PlaylistActivity extends AppCompatActivity {
             finish();
         });
         binding.ivPlaylistCancel.setOnClickListener(v -> {
-            shouldCancelLoading = true;
-            setResult(RESULT_CANCELED);
-            finish();
+            doCancelingFinish();
         });
 
         for (View v : new View[] {
@@ -237,9 +241,7 @@ public class PlaylistActivity extends AppCompatActivity {
                     updateControlBar();
                     adapter.notifyDataSetChanged();
                 } else {
-                    if (isLoading) shouldCancelLoading = true;
-                    setResult(RESULT_CANCELED);
-                    finish();
+                    doCancelingFinish();
                 }
             }
         });
@@ -252,6 +254,25 @@ public class PlaylistActivity extends AppCompatActivity {
             for (var upi : prevPlaylist) playlist.add((PlaylistItem)upi);
             updateSubtitle();
             adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void doCancelingFinish() {
+        if (somethingChanged) {
+            var ad = new AlertDialog.Builder(this)
+                    .setMessage(R.string.playlist_warning_discard_changes)
+                    .setPositiveButton(R.string.common_yes, (d, i) -> {
+                        shouldCancelLoading = true;
+                        setResult(RESULT_CANCELED);
+                        finish();
+                    })
+                    .setNegativeButton(R.string.common_no, null)
+                    .create();
+            ad.show();
+        } else {
+            shouldCancelLoading = true;
+            setResult(RESULT_CANCELED);
+            finish();
         }
     }
 
@@ -431,6 +452,7 @@ public class PlaylistActivity extends AppCompatActivity {
                         updateSubtitle();
                         adapter.notifyDataSetChanged();
                         isLoading = false;
+                        somethingChanged = true;
                     });
                 }
             }).start();
