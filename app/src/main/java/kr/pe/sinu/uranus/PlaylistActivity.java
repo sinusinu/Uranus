@@ -216,6 +216,7 @@ public class PlaylistActivity extends AppCompatActivity {
         binding.ivPlaylistCancel.setOnClickListener(v -> {
             doCancelingFinish();
         });
+        
 
         for (View v : new View[] {
                 binding.ivPlaylistAdd,

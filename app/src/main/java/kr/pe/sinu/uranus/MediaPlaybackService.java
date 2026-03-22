@@ -220,6 +220,10 @@ public class MediaPlaybackService extends Service {
 
     public void seekTo(int position) { player.seekTo(position); }
 
+    public long getCurrentPosition() { return player.getCurrentPosition(); }
+
+    public long getDuration() { return player.getDuration(); }
+
     public int getCurrentPlayingIndex() {
         if (player.getPlaybackState() != Player.STATE_READY && player.getPlaybackState() != Player.STATE_BUFFERING) return -1;
         return player.getCurrentMediaItemIndex();

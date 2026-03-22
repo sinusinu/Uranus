@@ -3,6 +3,7 @@
 
 package kr.pe.sinu.uranus;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -20,6 +21,8 @@ import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -30,9 +33,12 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.TooltipCompat;
 import androidx.core.graphics.Insets;
+import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.media3.common.Player;
@@ -71,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isSeeking = false;
     private boolean wasPlayingOnBeginSeek = false;
+    private final int doubleTapSeekIntervalSec = 5;
 
     private ArrayList<PlaylistItem> pendingPlaylistUpdate = null;
     private String pendingPlaylistNameUpdate = null;
@@ -128,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -329,6 +337,64 @@ public class MainActivity extends AppCompatActivity {
                 updateSleepTimerText();
             }
         };
+        final GestureDetector backwardSeekGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(@NonNull MotionEvent e) {
+                if (bound && mps.isPlaying()) {
+                    var currentPos = mps.getCurrentPosition();
+                    var newPos = (int)(Math.clamp(currentPos - (doubleTapSeekIntervalSec * 1000), 0, mps.getDuration()));
+                    mps.seekTo(newPos);
+
+                    binding.tvMainScrub.setText(String.format(getString(R.string.main_placeholder_scrub_seek_backwards), doubleTapSeekIntervalSec));
+                    binding.tvMainScrub.animate().cancel();
+                    binding.tvMainScrub.setAlpha(1f);
+                    binding.tvMainScrub.setVisibility(View.VISIBLE);
+                    binding.tvMainScrub.animate()
+                            .alpha(0f)
+                            .setDuration(300)
+                            .withEndAction(() -> binding.tvMainScrub.setVisibility(View.GONE))
+                            .start();
+                }
+                return true;
+            }
+        });
+        binding.vwMainSeekBackward.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                var handled = backwardSeekGestureDetector.onTouchEvent(event);
+                if (event.getAction() == MotionEvent.ACTION_DOWN) return true;
+                else return handled;
+            }
+        });
+        final GestureDetector forwardSeekGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(@NonNull MotionEvent e) {
+                if (bound && mps.isPlaying()) {
+                    var currentPos = mps.getCurrentPosition();
+                    var newPos = (int)(Math.clamp(currentPos + (doubleTapSeekIntervalSec * 1000), 0, mps.getDuration()));
+                    mps.seekTo(newPos);
+
+                    binding.tvMainScrub.setText(String.format(getString(R.string.main_placeholder_scrub_seek_forwards), doubleTapSeekIntervalSec));
+                    binding.tvMainScrub.animate().cancel();
+                    binding.tvMainScrub.setAlpha(1f);
+                    binding.tvMainScrub.setVisibility(View.VISIBLE);
+                    binding.tvMainScrub.animate()
+                            .alpha(0f)
+                            .setDuration(300)
+                            .withEndAction(() -> binding.tvMainScrub.setVisibility(View.GONE))
+                            .start();
+                }
+                return true;
+            }
+        });
+        binding.vwMainSeekForward.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                var handled = forwardSeekGestureDetector.onTouchEvent(event);
+                if (event.getAction() == MotionEvent.ACTION_DOWN) return true;
+                else return handled;
+            }
+        });
 
         for (View v : new View[] {
                 binding.ivMainPlaylist,
