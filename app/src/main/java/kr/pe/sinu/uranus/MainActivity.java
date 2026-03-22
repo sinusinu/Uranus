@@ -22,6 +22,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.Toast;
@@ -302,6 +303,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 if (!bound || (mps.getPlaybackState() != Player.STATE_READY)) return;
+                binding.tvMainScrub.setText(Util.toTimestamp(seekBar.getProgress() / 1000));
                 beginSeek();
             }
 
@@ -315,6 +317,7 @@ public class MainActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (isSeeking) {
                     binding.tvMainTimeCurrent.setText(Util.toTimestamp(progress / 1000));
+                    binding.tvMainScrub.setText(Util.toTimestamp(progress / 1000));
                 }
             }
         });
@@ -530,6 +533,9 @@ public class MainActivity extends AppCompatActivity {
     private void beginSeek() {
         if (isSeeking) return;
         isSeeking = true;
+        binding.tvMainScrub.animate().cancel();
+        binding.tvMainScrub.setAlpha(1f);
+        binding.tvMainScrub.setVisibility(View.VISIBLE);
         if (mps.getPlaybackState() == Player.STATE_READY && mps.getPlayWhenReady()) {
             wasPlayingOnBeginSeek = true;
             mps.pause();
@@ -541,6 +547,11 @@ public class MainActivity extends AppCompatActivity {
     private void endSeek() {
         if (!isSeeking) return;
         isSeeking = false;
+        binding.tvMainScrub.animate()
+                .alpha(0f)
+                .setDuration(300)
+                .withEndAction(() -> binding.tvMainScrub.setVisibility(View.GONE))
+                .start();
         if (mps.getPlaybackState() == Player.STATE_READY) {
             mps.seekTo(binding.sbMainSeekbar.getProgress());
             if (wasPlayingOnBeginSeek) mps.play();

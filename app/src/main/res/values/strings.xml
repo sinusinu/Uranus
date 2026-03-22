@@ -4,6 +4,7 @@
     <string name="main_placeholder_title">Uranus</string>
     <string name="main_placeholder_subtitle">Create a playlist to begin</string>
     <string name="main_placeholder_time">0:00</string>
+    <string name="main_placeholder_scrub_display">00:00</string>
     <string name="main_unknown_artist">Unknown Artist</string>
     <string name="main_unknown_album">Unknown Album</string>
     <string name="main_subtitle_aa_format" translatable="false">%s / %s</string>
