@@ -12,6 +12,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity;
 
@@ -22,6 +23,7 @@ import kr.pe.sinu.uranus.databinding.ActivitySettingsBinding;
 public class SettingsActivity extends AppCompatActivity {
     ActivitySettingsBinding binding;
     SharedPreferences sp;
+    SettingsAdapter adapter;
     SettingsItemClickListener itemClickListener;
 
     boolean cacheClearTried = false;
@@ -44,7 +46,11 @@ public class SettingsActivity extends AppCompatActivity {
         itemClickListener = new SettingsItemClickListener();
 
         binding.rvSettings.setLayoutManager(new LinearLayoutManager(this));
-        binding.rvSettings.setAdapter(new SettingsAdapter(this, sp, itemClickListener));
+        adapter = new SettingsAdapter(this, sp, itemClickListener);
+        binding.rvSettings.setAdapter(adapter);
+        if (binding.rvSettings.getItemAnimator() != null) {
+            ((SimpleItemAnimator)binding.rvSettings.getItemAnimator()).setSupportsChangeAnimations(false);
+        }
     }
 
     @Override
@@ -55,10 +61,14 @@ public class SettingsActivity extends AppCompatActivity {
 
     public class SettingsItemClickListener implements SettingsAdapter.OnItemClickListener {
         @Override
-        public void onItemClick(String key) {
+        public void onItemClick(String key, int position) {
             if (key == null) return;
-            //noinspection SwitchStatementWithTooFewBranches
             switch (key) {
+                case "hide_album_art":
+                    var newValue = sp.getInt(key, 0) == 0 ? 1 : 0;
+                    sp.edit().putInt(key, newValue).apply();
+                    adapter.notifyItemChanged(position);
+                    break;
                 case "clear_cache":
                     if (cacheClearTried) {
                         Toast.makeText(SettingsActivity.this, R.string.settings_cache_cleared, Toast.LENGTH_SHORT).show();

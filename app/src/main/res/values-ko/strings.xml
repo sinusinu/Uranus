@@ -75,6 +75,9 @@
     <string name="library_error_folder_list_corrupted">라이브러리 데이터를 불러오지 못했습니다. 라이브러리가 초기화되었습니다.</string>
 
     <string name="settings_title">설정</string>
+    <string name="settings_category_appearance">모양</string>
+    <string name="settings_item_hide_album_art_title">앨범 아트 숨기기</string>
+    <string name="settings_item_hide_album_art_desc">메인 화면에 앨범 아트를 표시하지 않습니다. 이 설정과 관계 없이, 알림 창에는 앨범 아트가 항상 표시됩니다.</string>
     <string name="settings_category_troubleshooting">문제 해결</string>
     <string name="settings_item_clear_cache_title">태그 캐시 정리</string>
     <string name="settings_item_clear_cache_desc">캐시된 태그 데이터를 모두 삭제합니다. 태그 데이터가 올바르게 표시되지 않을 경우 실행해보세요.</string>

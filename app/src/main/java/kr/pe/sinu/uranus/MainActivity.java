@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int UPDATE_MPS_STATUS_INTERVAL_MS = 450;
 
     private ActivityMainBinding binding;
+    private SharedPreferences sp;
 
     private MediaPlaybackService mps;
     private boolean bound = false;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler handler;
     private Runnable rUpdateMpsState;
     private Bitmap currentCover = null;
+    private boolean showCover = true;
 
     PopupMoreBinding mwBinding = null;
     private PopupWindow pwMoreWindow = null;
@@ -139,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        SharedPreferences sp = getSharedPreferences("kr.pe.sinu.uranus.prefs", MODE_PRIVATE);
+        sp = getSharedPreferences("kr.pe.sinu.uranus.prefs", MODE_PRIVATE);
         var initialRepeatMode = sp.getInt("repeat_mode", MediaPlaybackService.REPEAT_MODE_NO_REPEAT);
         updateRepeatModeIcon(initialRepeatMode);
 
@@ -434,56 +436,61 @@ public class MainActivity extends AppCompatActivity {
                 binding.ivMainCover.setImageBitmap(null);
                 currentCover.recycle();
             }
-            if (mm.cover != null) {
-                var f = new File(getCacheDir(), mm.cover);
-                if (f.exists()) {
-                    currentCover = BitmapFactory.decodeFile(f.getAbsolutePath());
-                    binding.ivMainCover.setImageBitmap(currentCover);
-                } else {
-                    // file was there but gone? try caching again
-                    try {
-                        var fdo = getContentResolver().openFileDescriptor(currentMeta.uri, "r");
-                        if (fdo != null) {
-                            var fd = fdo.dup().detachFd();
-                            var arts = TagLib.getPictures(fd);
-                            fdo.close();
-                            if (arts != null && arts.length > 0) {
-                                var art = arts[0].getData();
-                                var artBitmapFull = BitmapFactory.decodeByteArray(art, 0, art.length);
-                                var artOriginalWidth = artBitmapFull.getWidth();
-                                var artOriginalHeight = artBitmapFull.getHeight();
-                                Bitmap artBitmap;
-                                if (artOriginalWidth > 512) {
-                                    var artScaledHeight = (int) (512f * (artOriginalHeight / (float) artOriginalWidth));
-                                    artBitmap = Bitmap.createScaledBitmap(artBitmapFull, 512, artScaledHeight, true);
-                                    artBitmapFull.recycle();
-                                } else if (artOriginalHeight > 512) {
-                                    var artScaledWidth = (int) (512f * (artOriginalWidth / (float) artOriginalHeight));
-                                    artBitmap = Bitmap.createScaledBitmap(artBitmapFull, artScaledWidth, 512, true);
-                                    artBitmapFull.recycle();
+            if (showCover) {
+                if (mm.cover != null) {
+                    var f = new File(getCacheDir(), mm.cover);
+                    if (f.exists()) {
+                        currentCover = BitmapFactory.decodeFile(f.getAbsolutePath());
+                        binding.ivMainCover.setImageBitmap(currentCover);
+                    } else {
+                        // file was there but gone? try caching again
+                        try {
+                            var fdo = getContentResolver().openFileDescriptor(currentMeta.uri, "r");
+                            if (fdo != null) {
+                                var fd = fdo.dup().detachFd();
+                                var arts = TagLib.getPictures(fd);
+                                fdo.close();
+                                if (arts != null && arts.length > 0) {
+                                    var art = arts[0].getData();
+                                    var artBitmapFull = BitmapFactory.decodeByteArray(art, 0, art.length);
+                                    var artOriginalWidth = artBitmapFull.getWidth();
+                                    var artOriginalHeight = artBitmapFull.getHeight();
+                                    Bitmap artBitmap;
+                                    if (artOriginalWidth > 512) {
+                                        var artScaledHeight = (int) (512f * (artOriginalHeight / (float) artOriginalWidth));
+                                        artBitmap = Bitmap.createScaledBitmap(artBitmapFull, 512, artScaledHeight, true);
+                                        artBitmapFull.recycle();
+                                    } else if (artOriginalHeight > 512) {
+                                        var artScaledWidth = (int) (512f * (artOriginalWidth / (float) artOriginalHeight));
+                                        artBitmap = Bitmap.createScaledBitmap(artBitmapFull, artScaledWidth, 512, true);
+                                        artBitmapFull.recycle();
+                                    } else {
+                                        artBitmap = artBitmapFull;
+                                    }
+                                    artBitmapFull = null;
+                                    try (var fos = new FileOutputStream(f)) {
+                                        artBitmap.compress(Bitmap.CompressFormat.WEBP, 85, fos);
+                                    }
+                                    currentCover = artBitmap;
+                                    binding.ivMainCover.setImageBitmap(currentCover);
                                 } else {
-                                    artBitmap = artBitmapFull;
+                                    // cache says there was a cover but cover file is gone and now there is no cover????
+                                    binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
                                 }
-                                artBitmapFull = null;
-                                try (var fos = new FileOutputStream(f)) {
-                                    artBitmap.compress(Bitmap.CompressFormat.WEBP, 85, fos);
-                                }
-                                currentCover = artBitmap;
-                                binding.ivMainCover.setImageBitmap(currentCover);
                             } else {
-                                // cache says there was a cover but cover file is gone and now there is no cover????
                                 binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
                             }
-                        } else {
+                        } catch (IOException e) {
+                            Log.w("Uranus", "Failed to parse embedded picture! (triggered from MainActivity)");
+                            Log.w("Uranus", e.toString());
                             binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
                         }
-                    } catch (IOException e) {
-                        Log.w("Uranus", "Failed to parse embedded picture! (triggered from MainActivity)");
-                        Log.w("Uranus", e.toString());
-                        binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
                     }
+                } else {
+                    binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
                 }
             } else {
+                // user wants to hide cover
                 binding.ivMainCover.setImageResource(R.drawable.cover_placeholder);
             }
         } catch (Exception e) {
@@ -617,6 +624,10 @@ public class MainActivity extends AppCompatActivity {
         binding.sbMainSeekbar.setMax(1);
     }
 
+    private void loadSettings() {
+        showCover = sp.getInt("hide_album_art", 0) == 0;
+    }
+
     @Override
     public void finish() {
         super.finish();
@@ -652,6 +663,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        loadSettings();
         registerReceiver(mwTimerUpdater, new IntentFilter(Intent.ACTION_TIME_TICK));
     }
 

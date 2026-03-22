@@ -88,6 +88,9 @@
     <string name="library_item_subtitle_placeholder" translatable="false">/storage/emulated/0/Music</string>
 
     <string name="settings_title">Settings</string>
+    <string name="settings_category_appearance">Appearance</string>
+    <string name="settings_item_hide_album_art_title">Hide Album Art</string>
+    <string name="settings_item_hide_album_art_desc">Do not display album art on main screen. Regardless of this setting, album art will always be shown on notification.</string>
     <string name="settings_category_troubleshooting">Troubleshooting</string>
     <string name="settings_item_clear_cache_title">Clear Tag Cache</string>
     <string name="settings_item_clear_cache_desc">Clear all cached tag data. Try this if any tag data is not displayed correctly.</string>

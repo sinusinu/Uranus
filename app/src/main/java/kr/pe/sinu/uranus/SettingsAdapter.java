@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import kr.pe.sinu.uranus.databinding.ListSettingsItemBinding;
 
-// TODO: something something onclick something
 public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHolder> {
     private final Context context;
     private final SharedPreferences sp;
@@ -25,6 +24,18 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
         this.onItemClickListener = onItemClickListener;
 
         items = new SettingsItem[] {
+                new SettingsItem(
+                        context.getString(R.string.settings_category_appearance),
+                        null,
+                        SettingsItem.TYPE_CATEGORY,
+                        null
+                ),
+                new SettingsItem(
+                        context.getString(R.string.settings_item_hide_album_art_title),
+                        context.getString(R.string.settings_item_hide_album_art_desc),
+                        SettingsItem.TYPE_CHECKBOX,
+                        "hide_album_art"
+                ),
                 new SettingsItem(
                         context.getString(R.string.settings_category_troubleshooting),
                         null,
@@ -90,7 +101,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
                     holder.binding.tvSettingsItemSubtitle.setText(items[position].desc);
                 }
                 holder.binding.llSettingsItemItem.setOnClickListener(v -> {
-                    if (onItemClickListener != null) onItemClickListener.onItemClick(items[position].key);
+                    if (onItemClickListener != null) onItemClickListener.onItemClick(items[position].key, position);
                 });
                 break;
             case SettingsItem.TYPE_CHECKBOX:
@@ -104,8 +115,9 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
                     holder.binding.tvSettingsItemSubtitle.setVisibility(View.VISIBLE);
                     holder.binding.tvSettingsItemSubtitle.setText(items[position].desc);
                 }
+                holder.binding.cbSettingsItemCheck.setChecked(sp.getInt(items[position].key, 0) == 1);
                 holder.binding.llSettingsItemItem.setOnClickListener(v -> {
-                    if (onItemClickListener != null) onItemClickListener.onItemClick(items[position].key);
+                    if (onItemClickListener != null) onItemClickListener.onItemClick(items[position].key, position);
                 });
                 break;
             case SettingsItem.TYPE_CATEGORY:
@@ -122,6 +134,6 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
     }
 
     public interface OnItemClickListener {
-        void onItemClick(String key);
+        void onItemClick(String key, int position);
     }
 }
