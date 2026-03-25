@@ -331,9 +331,6 @@ public class MediaPlaybackService extends Service {
         }
     }
 
-    // TODO: remove this function on release
-    public void emergencyEscape() { stopSelf(); }
-
     public MpsMeta getMpsCurrentMeta() {
         if (player.getPlaybackState() != Player.STATE_READY && player.getPlaybackState() != Player.STATE_BUFFERING) return null;
         var currentPlayingIndex = getCurrentPlayingIndex();
