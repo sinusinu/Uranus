@@ -474,6 +474,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateMediaMetadata() {
         Log.d("Uranus", "activity is updating metadata...");
+        if (!mps.isReadyOrBuffering()) {
+            resetDisplay();
+            return;
+        }
         var currentMeta = mps.getMpsCurrentMeta();
         if (currentMeta == null) {
             Log.w("Uranus", "mps meta is null, will be ignored");

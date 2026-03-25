@@ -234,6 +234,8 @@ public class MediaPlaybackService extends Service {
 
     public String getCurrentPlaylistName() { return playlistName; }
 
+    public boolean isReadyOrBuffering() { return player.getPlaybackState() == Player.STATE_READY || player.getPlaybackState() == Player.STATE_BUFFERING; }
+
     public boolean isPlaying() { return player.isPlaying(); }
 
     public int getPlaybackState() { return player.getPlaybackState(); }
