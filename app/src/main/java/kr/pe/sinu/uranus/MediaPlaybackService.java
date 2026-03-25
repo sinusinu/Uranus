@@ -220,8 +220,8 @@ public class MediaPlaybackService extends Service {
     }
 
     public void pause() {
-        if (!player.isPlaying() || !player.getPlayWhenReady()) return;
-        player.pause();
+        if (!isReadyOrBuffering() || !player.getPlayWhenReady()) return;
+        player.setPlayWhenReady(false);
     }
 
     public void goPrevious() { player.seekToPrevious(); }

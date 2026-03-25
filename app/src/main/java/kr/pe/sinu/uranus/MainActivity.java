@@ -337,14 +337,14 @@ public class MainActivity extends AppCompatActivity {
         binding.sbMainSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                if (!bound || (mps.getPlaybackState() != Player.STATE_READY)) return;
+                if (!bound || !mps.isReadyOrBuffering()) return;
                 binding.tvMainScrub.setText(Util.toTimestamp(seekBar.getProgress() / 1000));
                 beginSeek();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if (!bound || (mps.getPlaybackState() != Player.STATE_READY)) return;
+                if (!bound || !mps.isReadyOrBuffering()) return;
                 endSeek();
             }
 
@@ -464,7 +464,7 @@ public class MainActivity extends AppCompatActivity {
                 binding.tvMainTimeTotal.setText(R.string.main_placeholder_time);
                 binding.tvMainTimeCurrent.setText(R.string.main_placeholder_time);
                 if (mps.getPlaybackState() != Player.STATE_READY && mps.getPlaybackState() != Player.STATE_BUFFERING) {
-                    binding.sbMainSeekbar.setMax(1);
+                    binding.sbMainSeekbar.setMax(0);
                     binding.sbMainSeekbar.setProgress(0);
                 }
             }
@@ -636,7 +636,7 @@ public class MainActivity extends AppCompatActivity {
         binding.tvMainScrub.animate().cancel();
         binding.tvMainScrub.setAlpha(1f);
         binding.tvMainScrub.setVisibility(View.VISIBLE);
-        if (mps.getPlaybackState() == Player.STATE_READY && mps.getPlayWhenReady()) {
+        if (mps.isReadyOrBuffering() && mps.getPlayWhenReady()) {
             wasPlayingOnBeginSeek = true;
             mps.pause();
         } else {
@@ -748,7 +748,7 @@ public class MainActivity extends AppCompatActivity {
         binding.tvMainTimeCurrent.setText(R.string.main_placeholder_time);
         binding.tvMainTimeTotal.setText(R.string.main_placeholder_time);
         binding.sbMainSeekbar.setProgress(0);
-        binding.sbMainSeekbar.setMax(1);
+        binding.sbMainSeekbar.setMax(0);
     }
 
     private void loadSettings() {
