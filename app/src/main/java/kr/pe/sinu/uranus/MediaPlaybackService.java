@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -36,6 +37,7 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.session.MediaSession;
 import androidx.media3.session.MediaStyleNotificationHelper;
+import androidx.media3.session.legacy.MediaSessionCompat;
 
 import java.util.ArrayList;
 
@@ -83,6 +85,7 @@ public class MediaPlaybackService extends Service {
 
     private MpsEventListener eventListener;
     private NotificationDismissedReceiver dismissedReceiver;
+    private BecomingNoisyReceiver noisyReceiver;
 
     // FIXME: notification not updating properly when using "Play from" feature?
 
@@ -141,6 +144,9 @@ public class MediaPlaybackService extends Service {
 
         dismissedReceiver = new NotificationDismissedReceiver();
         ContextCompat.registerReceiver(this, dismissedReceiver, new IntentFilter(ACTION_NOTIFICATION_DISMISSED), ContextCompat.RECEIVER_NOT_EXPORTED);
+
+        noisyReceiver = new BecomingNoisyReceiver();
+        registerReceiver(noisyReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
     }
 
     @Nullable
@@ -170,6 +176,7 @@ public class MediaPlaybackService extends Service {
         player.release();
         try { unregisterReceiver(dismissedReceiver); } catch (Exception ignored) {}
         try { unregisterReceiver(sleepTimeCheckReceiver); } catch (Exception ignored) {}
+        try { unregisterReceiver(noisyReceiver); } catch (Exception ignored) {}
         super.onDestroy();
     }
 
@@ -454,6 +461,15 @@ public class MediaPlaybackService extends Service {
             if (sleepTimerTargetMinutes <= nowMins) {
                 eventListener.onMpsExiting();
                 stopSelf();
+            }
+        }
+    }
+
+    public class BecomingNoisyReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+                pause();
             }
         }
     }
