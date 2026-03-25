@@ -390,7 +390,7 @@ public class MediaPlaybackService extends Service {
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_noti)
                 .setStyle(new MediaStyleNotificationHelper.MediaStyle(mediaSession))
                 .setContentIntent(openActivityPendingIntent)
                 .setDeleteIntent(PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_IMMUTABLE))
@@ -409,7 +409,7 @@ public class MediaPlaybackService extends Service {
 
         var notifBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_noti)
                 .setStyle(new MediaStyleNotificationHelper.MediaStyle(mediaSession))
                 .setContentIntent(openActivityPendingIntent)
                 .setDeleteIntent(PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_IMMUTABLE))
