@@ -753,6 +753,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadSettings() {
         showCover = sp.getInt("hide_album_art", 0) == 0;
+        binding.ivMainCover.setVisibility(showCover ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
