@@ -206,6 +206,10 @@ public class MediaPlaybackService extends Service {
         ArrayList<MediaItem> playerPlaylist = new ArrayList<>(newPlaylist.size());
         for (var pi : newPlaylist) playerPlaylist.add(MediaItem.fromUri(pi.uriSource));
         player.setMediaItems(playerPlaylist, !newPlaylistContainsCurrentSong);
+        if (!newPlaylistContainsCurrentSong) {
+            player.seekTo(0, 0);
+            player.stop();
+        }
     }
 
     public boolean play() {
