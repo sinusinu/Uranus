@@ -96,7 +96,7 @@ public class LibraryActivity extends AppCompatActivity {
                 if (df == null) return;
                 String dirName = df.getName();
 
-                getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 folders.add(new LibraryFolder(dirName, uri));
                 saveFolders();
@@ -228,7 +228,7 @@ public class LibraryActivity extends AppCompatActivity {
                     DocumentFile df = DocumentFile.fromTreeUri(this, folderUri);
                     if (df == null || !df.exists() || !df.isDirectory()) {
                         someFolderRevoked = true;
-                        getContentResolver().releasePersistableUriPermission(folderUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        getContentResolver().releasePersistableUriPermission(folderUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         continue;
                     }
 
@@ -427,7 +427,7 @@ public class LibraryActivity extends AppCompatActivity {
                         .setTitle(String.format(getString(R.string.library_warning_remove_folder_title), item.title))
                         .setMessage(R.string.library_warning_remove_folder_message)
                         .setPositiveButton(R.string.common_yes, (d, v) -> {
-                            getContentResolver().releasePersistableUriPermission(Uri.parse(item.target), Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                            getContentResolver().releasePersistableUriPermission(Uri.parse(item.target), Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             folders.remove(position);
                             saveFolders();
                             refreshDisplayList();
