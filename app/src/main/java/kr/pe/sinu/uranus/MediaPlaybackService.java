@@ -204,7 +204,21 @@ public class MediaPlaybackService extends Service {
         }
         playlist.addAll(newPlaylist);
         ArrayList<MediaItem> playerPlaylist = new ArrayList<>(newPlaylist.size());
-        for (var pi : newPlaylist) playerPlaylist.add(MediaItem.fromUri(pi.uriSource));
+        for (var pi : newPlaylist) {
+            var pmi = MediaItem.fromUri(pi.uriSource);
+            if (pmi.mediaMetadata.title == null) {
+                Log.d("Uranus", "Media with null title found");
+                pmi = new MediaItem.Builder()
+                        .setUri(pi.uriSource)
+                        .setMediaMetadata(
+                                new MediaMetadata.Builder()
+                                        .setTitle(Util.stripFileExt(pi.filename))
+                                        .build()
+                        )
+                        .build();
+            }
+            playerPlaylist.add(pmi);
+        }
         player.setMediaItems(playerPlaylist, !newPlaylistContainsCurrentSong);
         if (!newPlaylistContainsCurrentSong) {
             player.seekTo(0, 0);
@@ -425,10 +439,6 @@ public class MediaPlaybackService extends Service {
                 .setDeleteIntent(PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_IMMUTABLE))
                 .setOngoing(false);
 
-        var nowPlayingMetadata = player.getMediaMetadata();
-        if (getCurrentPlayingIndex() != -1 && nowPlayingMetadata != MediaMetadata.EMPTY && nowPlayingMetadata.title == null) {
-            notifBuilder.setContentTitle(Util.stripFileExt(playlist.get(getCurrentPlayingIndex()).filename));
-        }
         var notif = notifBuilder.build();
         var nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         nm.notify(NOTIFICATION_ID, notif);
