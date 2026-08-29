@@ -1,0 +1,98 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_playlist_list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".PlaylistListActivity"
+    tools:ignore="NestedWeights">
+
+    <TextView
+        android:id="@+id/tv_playlist_list_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/playlist_list_title"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_playlist_list_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/playlist_list_subtitle_placeholder"
+        android:textSize="12sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_playlist_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/list_playlist_list_item" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_weight="0"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <Space
+            android:layout_width="12dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0" />
+
+        <TextView
+            android:id="@+id/tv_playlist_list_warning_replace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/playlist_list_warning_replace" />
+
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0" />
+
+        <ImageView
+            android:id="@+id/iv_playlist_list_ok"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_weight="0"
+            android:background="@drawable/background_selectable"
+            android:clickable="true"
+            android:contentDescription="@string/common_ok"
+            android:focusable="true"
+            android:padding="12dp"
+            app:srcCompat="@drawable/ic_ok" />
+
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0" />
+
+        <ImageView
+            android:id="@+id/iv_playlist_list_cancel"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_weight="0"
+            android:background="@drawable/background_selectable"
+            android:clickable="true"
+            android:contentDescription="@string/common_cancel"
+            android:focusable="true"
+            android:padding="12dp"
+            app:srcCompat="@drawable/ic_cancel" />
+    </LinearLayout>
+</LinearLayout>
