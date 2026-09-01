@@ -2,7 +2,7 @@
 
 ![Icon](app/src/main/ic_launcher-playstore.png)
 
-A dinky little music player app for me
+A dinky little music player app
 
 # Features
 
@@ -11,7 +11,9 @@ A dinky little music player app for me
 
 # Download
 
-Grab the APK from [here](https://github.com/sinusinu/Uranus/releases/latest).
+[<img src="images/googleplay.png">](https://play.google.com/store/apps/details?id=kr.pe.sinu.uranus)
+
+or grab the APK directly from [here](https://github.com/sinusinu/Uranus/releases/latest).
 
 # Screenshots
 
