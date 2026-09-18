@@ -2,12 +2,15 @@
 
 ![Icon](app/src/main/ic_launcher-playstore.png)
 
-A dinky little music player app
+A file-picking music player
 
 # Features
 
 - SAF-based, File-picking playlist system
-- Volume multiplier, Sleep timer, Playback speed modifier
+- A bunch of weird features, including:
+  - Volume multiplier
+  - Sleep timer
+  - Playback speed modifier
 
 # Download
 
